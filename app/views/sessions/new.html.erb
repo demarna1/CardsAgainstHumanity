@@ -1,2 +1,17 @@
-<h1>Sessions#new</h1>
-<p>Find me in app/views/sessions/new.html.erb</p>
+<% provide(:title, "Join Cards Against Humanity") %>
+<h1>Cards Against Humanity</h1>
+<%= form_for(:session, url: join_path) do |f| %>
+  <div class="field">
+    <%= f.label :room_code %>
+    <%= f.text_field :room_code %>
+  </div>
+  <p/>
+  <div class="field">
+    <%= f.label :player_name %>
+    <%= f.text_field :player_name %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Join" %>
+  </div>
+<% end %>
+<br/>
