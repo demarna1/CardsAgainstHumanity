@@ -1,6 +1,5 @@
-<% provide(:title, "Join Cards Against Humanity") %>
 <h1>Cards Against Humanity</h1>
-<%= form_for(:session, url: join_path) do |f| %>
+<%= form_for(:session, url: sessions_path) do |f| %>
   <div class="field">
     <%= f.label :room_code %>
     <%= f.text_field :room_code %>
@@ -14,4 +13,3 @@
     <%= f.submit "Join" %>
   </div>
 <% end %>
-<br/>
