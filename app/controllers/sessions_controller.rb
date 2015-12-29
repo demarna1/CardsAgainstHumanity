@@ -11,6 +11,7 @@ class SessionsController < ApplicationController
     game = Game.where(room_code: room_code).order(created_at: :desc).first
     if (game)
       player = Player.create(player_name: player_name, score: 0)
+      player.answer_cards << AnswerCard.first
       game.players << player
       session[:player_id] = player.id
       redirect_to root_path, notice: "Logged in successfully as #{player_name}"
