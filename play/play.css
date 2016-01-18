@@ -1,0 +1,101 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+html, input {
+  font-family:
+    "HelveticaNeue-Light",
+    "Helvetica Neue Light",
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    "Lucida Grande",
+    sans-serif;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+  word-wrap: break-word;
+}
+
+.pages {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.page {
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+.login.page {
+  background-color: #000;
+}
+
+.login.page .form {
+  text-align: center;
+  width: 400px;
+  margin: auto;
+}
+
+.login.page .title {
+  font-size: 200%;
+}
+
+.roomCode, .username {
+  width: 100%;
+}
+
+.username .label, .roomCode .label {
+  font-size: 150%;
+  margin-right: 8px;
+}
+
+.roomCode .input, .username .input {
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #fff;
+  outline: none;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  margin-left: 8px;
+  text-align: center;
+  font-size: 150%;
+  letter-spacing: 1px;
+}
+
+.playButton {
+  color: #fff;
+  background: #000;
+  padding: 10px 20px 10px 20px;
+  border: solid #fff 2px;
+  font-size: 150%;
+}
+
+.playButton:hover {
+  background: #3cb0fd;
+}
+
+.login.page .title, .username .label, .roomCode .label, .username .input, .roomCode .input {
+  color: #fff;
+  font-weight: 100;
+}
+
+.wait.page {
+  display: none;
+}
+
