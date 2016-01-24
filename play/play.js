@@ -22,7 +22,7 @@ $(function() {
     socket.on('login success', function (data) {
         console.log(data.username + ' logged in');
         $loginPage.fadeOut();
-        $waitPage.show();
+        $waitPage.delay(400).fadeIn();
     });
 
     socket.on('invalid code', function (data) {

@@ -1,0 +1,43 @@
+ul {
+  list-style: none;
+  word-wrap: break-word;
+}
+
+.pages {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.page {
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+.lobby.page {
+  display: none;
+  text-align: center;
+  margin: auto;
+}
+
+.gameCode .label, .lobbyPlayer {
+  color: #fff;
+  font-weight: 100;
+}
+
+.gameCode .code {
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.lobbyList {
+  margin: 15px;
+}
+
+.lobbyPlayer {
+  font-size: 150%;
+}
+

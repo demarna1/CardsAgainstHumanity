@@ -3,17 +3,27 @@
   <meta charset="UTF-8">
   <title>Cards Against Humanity</title>
   <link rel="stylesheet" href="common-dark.css">
+  <link rel="stylesheet" href="game.css">
 </head>
 <body>
   <ul class="pages">
-    <li class="start page">
+    <li class="new page">
       <h3 class="title">Cards Against Humanity</h3>
-      <div class="startButton">
-        <input class="button" type="button" value="Start"/>
+      <div class="newButton">
+        <input class="button" type="button" value="New Game"/>
       </div>
+    </li>
+    <li class="lobby page">
+      <h3 class="title">Cards Against Humanity</h3>
+      <div class="gameCode">
+        <label class="label">Game Code:</label>
+        <label class="code"/>
+      </div>
+      <ul class="lobbyList"/>
     </li>
   </ul>
   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/game.js"></script>
 </body>
 </html>

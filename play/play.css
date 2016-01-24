@@ -16,10 +16,6 @@ ul {
   width: 100%;
 }
 
-.login.page {
-  background-color: #000;
-}
-
 .login.page .form {
   text-align: center;
   width: 400px;

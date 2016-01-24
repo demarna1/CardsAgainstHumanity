@@ -23,10 +23,20 @@ server.listen(port, function() {
 });
 
 var numUsers = 0;
-var gameCode = "HOUS";
+var gameCode = '';
 
 io.on('connection', function (socket) {
     var addedUser = false;
+    console.log('new connection');
+
+    function generateGameCode() {
+        var text = '';
+        var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        for (var i=0; i<4; i++) {
+            text += letters.charAt(Math.floor(Math.random() * letters.length));
+        }
+        return text;
+    }
 
     function invalidCode(roomCode) {
         console.log('Invalid room code: ' + roomCode);
@@ -39,6 +49,15 @@ io.on('connection', function (socket) {
         });
     }
 
+    // The host wants to start a new game
+    socket.on('new game', function () {
+        gameCode = generateGameCode();
+        console.log('New game started with gameCode = ' + gameCode);
+        socket.emit('code created', {
+            gameCode: gameCode
+        });
+    });
+
     // The client is logging into a room
     socket.on('login', function (data) {
         if (data.roomCode !== gameCode) {
@@ -47,10 +66,11 @@ io.on('connection', function (socket) {
         }
         if (addedUser) return;
         socket.username = data.username;
+        socket.roomCode = data.roomCode;
         ++numUsers;
         addedUser = true;
-        console.log(data.username + ' joined room ' + data.roomCode +
-            '; numUsers = ' + numUsers);
+        console.log(data.username + ' joined room ' + data.roomCode);
+        console.log('numUsers = ' + numUsers);
         socket.emit('login success', {
             username: data.username
         });
@@ -58,6 +78,20 @@ io.on('connection', function (socket) {
             username: socket.username,
             numUsers: numUsers
         });
+    });
+
+    // The client has disconnected
+    socket.on('disconnect', function () {
+        if (addedUser) {
+            --numUsers;
+            console.log(socket.username + ' left room ' + socket.roomCode);
+            console.log('numUsers = ' + numUsers);
+            // echo globally that this client has left
+            socket.broadcast.emit('user left', {
+                username: socket.username,
+                numUsers: numUsers
+            });
+        }
     });
 });
 
