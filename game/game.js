@@ -21,6 +21,11 @@ $(function() {
 
     socket.on('user joined', function (data) {
         console.log('adding user ' + data.username + ' to game');
-        $lobbyList.append('<li class="lobbyPlayer">' + data.username + '</li>');
+        $lobbyList.append('<li class="lobbyPlayer ' + data.username + '">' + data.username + '</li>');
+    });
+
+    socket.on('user left', function (data) {
+        console.log('user ' + data.username + ' left the game');
+        $('.lobbyPlayer.' + data.username).remove();
     });
 });
