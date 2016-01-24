@@ -28,4 +28,10 @@ $(function() {
     socket.on('invalid code', function (data) {
         alert('Invalid room code: ' + data.roomCode);
     });
+
+    socket.on('host left', function (data) {
+        $waitPage.fadeOut();
+        $loginPage.delay(400).fadeIn();
+        alert('Host from room ' + data.gameCode + ' has disconnected');
+    });
 });

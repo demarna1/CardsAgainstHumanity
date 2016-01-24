@@ -27,6 +27,7 @@ var gameCode = '';
 
 io.on('connection', function (socket) {
     var addedUser = false;
+    var addedGame = false;
     console.log('new connection');
 
     function generateGameCode() {
@@ -51,6 +52,13 @@ io.on('connection', function (socket) {
 
     // The host wants to start a new game
     socket.on('new game', function () {
+        if (gameCode) {
+            socket.emit('host exists', {
+                gameCode: gameCode
+            });
+            return;
+        }
+        addedGame = true;
         gameCode = generateGameCode();
         console.log('New game started with gameCode = ' + gameCode);
         socket.emit('code created', {
@@ -91,6 +99,14 @@ io.on('connection', function (socket) {
                 username: socket.username,
                 numUsers: numUsers
             });
+        }
+        if (addedGame) {
+            console.log('Game host with code = ' + gameCode + ' has disconnected');
+            socket.broadcast.emit('host left', {
+                gameCode: gameCode
+            });
+            gameCode = '';
+            addedGame = false;
         }
     });
 });

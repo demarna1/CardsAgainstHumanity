@@ -19,6 +19,10 @@ $(function() {
         $lobbyPage.delay(400).fadeIn();
     });
 
+    socket.on('host exists', function (data) {
+        alert('Host instance already exists: ' + data.gameCode);
+    });
+
     socket.on('user joined', function (data) {
         console.log('adding user ' + data.username + ' to game');
         $lobbyList.append('<li class="lobbyPlayer ' + data.username + '">' + data.username + '</li>');
