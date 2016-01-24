@@ -32,6 +32,7 @@ $(function() {
     socket.on('host left', function (data) {
         $waitPage.fadeOut();
         $loginPage.delay(400).fadeIn();
+        $roomCodeInput.val('');
         alert('Host from room ' + data.gameCode + ' has disconnected');
     });
 });

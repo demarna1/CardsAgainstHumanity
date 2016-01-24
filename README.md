@@ -16,9 +16,9 @@ The server will be started at `http://localhost:3000`.
 ### Deploy to heroku
 
 ```
-heroku login
-git push heroku master
-heroku open
+$ heroku login
+$ git push heroku master
+$ heroku open
 ```
 
 The page is hosted at `https://cah-node.herokuapp.com`

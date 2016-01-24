@@ -88,7 +88,7 @@ io.on('connection', function (socket) {
         });
     });
 
-    // The client has disconnected
+    // The client or game host has disconnected
     socket.on('disconnect', function () {
         if (addedUser) {
             --numUsers;
