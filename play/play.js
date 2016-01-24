@@ -1,7 +1,7 @@
 $(function() {
     var $roomCodeInput = $('.roomCode .input');
     var $usernameInput = $('.username .input');
-    var $playButton = $('.playButton');
+    var $playButton = $('.playButton .button');
     var $loginPage = $('.login.page');
     var $waitPage = $('.wait.page');
 

@@ -1,29 +1,3 @@
-* {
-  box-sizing: border-box;
-}
-
-html {
-  font-weight: 300;
-  -webkit-font-smoothing: antialiased;
-}
-
-html, input {
-  font-family:
-    "HelveticaNeue-Light",
-    "Helvetica Neue Light",
-    "Helvetica Neue",
-    Helvetica,
-    Arial,
-    "Lucida Grande",
-    sans-serif;
-}
-
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
 ul {
   list-style: none;
   word-wrap: break-word;
@@ -52,10 +26,6 @@ ul {
   margin: auto;
 }
 
-.login.page .title {
-  font-size: 200%;
-}
-
 .roomCode, .username {
   width: 100%;
 }
@@ -78,19 +48,7 @@ ul {
   letter-spacing: 1px;
 }
 
-.playButton {
-  color: #fff;
-  background: #000;
-  padding: 10px 20px 10px 20px;
-  border: solid #fff 2px;
-  font-size: 150%;
-}
-
-.playButton:hover {
-  background: #3cb0fd;
-}
-
-.login.page .title, .username .label, .roomCode .label, .username .input, .roomCode .input {
+.username .label, .roomCode .label, .username .input, .roomCode .input {
   color: #fff;
   font-weight: 100;
 }

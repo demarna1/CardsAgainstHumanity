@@ -2,6 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Cards Against Humanity</title>
+  <link rel="stylesheet" href="common-dark.css">
   <link rel="stylesheet" href="play.css">
 </head>
 <body>
@@ -17,14 +18,16 @@
           <label class="label">Name:</label>
           <input class="input" type="text" maxlength="12" size="14"/>
         </div>
-        <div>
-          <input class="playButton" type="button" value="Play"/>
+        <div class="playButton">
+          <input class="button" type="button" value="Play"/>
         </div>
       </div>
     </li>
     <li class="wait page">
-      <label class="label">Welcome</label>
-      <input class="startButton" type="button" value="Start"/>
+      <h3 class="title">Cards Against Humanity</h3>
+      <div class="startButton">
+        <input class="button" type="button" value="Start"/>
+      </div>
     </li>
   </ul>
   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
