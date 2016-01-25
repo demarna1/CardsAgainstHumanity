@@ -22,12 +22,12 @@ ul {
   margin: auto;
 }
 
-.gameCode .label, .lobbyPlayer {
+.label, .lobbyPlayer {
   color: #fff;
   font-weight: 100;
 }
 
-.gameCode .code {
+.code {
   color: #fff;
   font-weight: 600;
   letter-spacing: 1px;
@@ -39,5 +39,9 @@ ul {
 
 .lobbyPlayer {
   font-size: 150%;
+}
+
+.startButton {
+  margin: 10px;
 }
 

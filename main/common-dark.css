@@ -47,3 +47,8 @@ html, body {
   background: #3cb0fd;
 }
 
+.button:disabled {
+  color: #AAA;
+  background: #444;
+}
+

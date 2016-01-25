@@ -39,17 +39,6 @@ io.on('connection', function (socket) {
         return text;
     }
 
-    function invalidCode(roomCode) {
-        console.log('Invalid room code: ' + roomCode);
-        if (addedUser) {
-            addedUser = false;
-            numUsers--;
-        }
-        socket.emit('invalid code', {
-            roomCode: roomCode
-        });
-    }
-
     // The host wants to start a new game
     socket.on('new game', function () {
         if (gameCode) {
@@ -69,10 +58,11 @@ io.on('connection', function (socket) {
     // The client is logging into a room
     socket.on('login', function (data) {
         if (data.roomCode !== gameCode) {
-            invalidCode(data.roomCode);
+            socket.emit('invalid code', {
+                roomCode: data.roomCode
+            });
             return;
         }
-        if (addedUser) return;
         socket.username = data.username;
         socket.roomCode = data.roomCode;
         ++numUsers;
@@ -86,6 +76,13 @@ io.on('connection', function (socket) {
             username: socket.username,
             numUsers: numUsers
         });
+    });
+
+    socket.on('user kicked', function () {
+        if (addedUser) {
+            addedUser = false;
+            --numUsers;
+        }
     });
 
     // The client or game host has disconnected

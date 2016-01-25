@@ -44,7 +44,7 @@ ul {
   letter-spacing: 1px;
 }
 
-.username .label, .roomCode .label, .username .input, .roomCode .input {
+.label, .username .input, .roomCode .input {
   color: #fff;
   font-weight: 100;
 }
