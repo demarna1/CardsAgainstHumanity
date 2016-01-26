@@ -44,6 +44,10 @@ ul {
   letter-spacing: 1px;
 }
 
+.roomCode .input {
+  text-transform: uppercase;
+}
+
 .label, .username .input, .roomCode .input {
   color: #fff;
   font-weight: 100;

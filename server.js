@@ -57,17 +57,18 @@ io.on('connection', function (socket) {
 
     // The client is logging into a room
     socket.on('login', function (data) {
-        if (data.roomCode !== gameCode) {
+        roomCode = data.roomCode.toUpperCase();
+        if (roomCode !== gameCode) {
             socket.emit('invalid code', {
-                roomCode: data.roomCode
+                roomCode: roomCode
             });
             return;
         }
         socket.username = data.username;
-        socket.roomCode = data.roomCode;
+        socket.roomCode = roomCode;
         ++numUsers;
         addedUser = true;
-        console.log(data.username + ' joined room ' + data.roomCode);
+        console.log(data.username + ' joined room ' + roomCode);
         console.log('numUsers = ' + numUsers);
         socket.emit('login success', {
             username: data.username
@@ -78,6 +79,19 @@ io.on('connection', function (socket) {
         });
     });
 
+    // The host has started the game
+    socket.on('start game', function () {
+        console.log('Game is starting!');
+        socket.emit('black card', {
+            blackCard: 'Sample black card'
+        });
+        whiteCards = ['Card1', 'Card2', 'Card3'];
+        socket.broadcast.emit('initial cards', {
+            whiteCards: whiteCards
+        });
+    });
+
+    // The client was kicked from the room
     socket.on('user kicked', function () {
         if (addedUser) {
             addedUser = false;

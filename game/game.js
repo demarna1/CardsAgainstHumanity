@@ -6,8 +6,12 @@ $(function() {
     var $lobbyList = $('.lobbyList');
     var $readyLabel = $('.readyLabel .label');
     var $startButton = $('.startButton .button');
+    var $questionPage = $('.question.page');
+    var $questionRound = $('.question.page .title');
+    var $questionLabel = $('.questionLabel .label');
 
     var socket = io();
+    var round = 0;
 
     function updateStartButton(numUsers) {
         if (numUsers >= 2) {
@@ -26,6 +30,7 @@ $(function() {
 
     $startButton.click(function() {
         console.log('Start game clicked');
+        socket.emit('start game');
     });
 
     socket.on('code created', function (data) {
@@ -49,5 +54,14 @@ $(function() {
         console.log('user ' + data.username + ' left the game');
         $('.lobbyPlayer.' + data.username).remove();
         updateStartButton(data.numUsers);
+    });
+
+    socket.on('black card', function (data) {
+        console.log('Q: ' + data.blackCard);
+        ++round;
+        $questionRound.text('Round ' + round);
+        $questionLabel.text(data.blackCard);
+        $lobbyPage.fadeOut();
+        $questionPage.delay(400).fadeIn();
     });
 });

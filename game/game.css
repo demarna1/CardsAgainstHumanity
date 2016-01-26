@@ -22,6 +22,12 @@ ul {
   margin: auto;
 }
 
+.question.page {
+  display: none;
+  text-align: center;
+  margin: auto;
+}
+
 .label, .lobbyPlayer {
   color: #fff;
   font-weight: 100;
@@ -37,7 +43,7 @@ ul {
   margin: 15px;
 }
 
-.lobbyPlayer {
+.lobbyPlayer, .questionLabel .label {
   font-size: 150%;
 }
 

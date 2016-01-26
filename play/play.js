@@ -38,4 +38,11 @@ $(function() {
         socket.emit('user kicked');
         alert('Host from room ' + data.gameCode + ' has disconnected');
     });
+
+    socket.on('initial cards', function (data) {
+        console.log('Received ' + data.whiteCards.length + ' cards');
+        for (i = 0; i < data.whiteCards.length; i++) {
+            console.log('  ' + data.whiteCards[i]);
+        }
+    });
 });
