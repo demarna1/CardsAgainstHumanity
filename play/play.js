@@ -1,12 +1,22 @@
 $(function() {
+    // Pages
+    var $loginPage = $('.login.page');
+    var $waitPage = $('.wait.page');
+    var $currentPage = $loginPage
+
+    // Other jQuery elements
     var $roomCodeInput = $('.roomCode .input');
     var $usernameInput = $('.username .input');
     var $playButton = $('.playButton .button');
-    var $loginPage = $('.login.page');
-    var $waitPage = $('.wait.page');
     var $welcomeLabel = $('.welcomeLabel .label');
 
     var socket = io();
+
+    function transitionTo($nextPage) {
+        $currentPage.fadeOut();
+        $nextPage.delay(400).fadeIn();
+        $currentPage = $nextPage;
+    }
 
     $playButton.click(function() {
         console.log('Play clicked');
@@ -22,9 +32,8 @@ $(function() {
 
     socket.on('login success', function (data) {
         console.log(data.username + ' logged in');
-        $loginPage.fadeOut();
-        $waitPage.delay(400).fadeIn();
         $welcomeLabel.text('Welcome, ' + data.username + '!');
+        transitionTo($waitPage);
     });
 
     socket.on('invalid code', function (data) {
@@ -32,9 +41,8 @@ $(function() {
     });
 
     socket.on('host left', function (data) {
-        $waitPage.fadeOut();
-        $loginPage.delay(400).fadeIn();
         $roomCodeInput.val('');
+        transitionTo($loginPage);
         socket.emit('user kicked');
         alert('Host from room ' + data.gameCode + ' has disconnected');
     });

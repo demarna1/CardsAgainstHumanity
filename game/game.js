@@ -1,17 +1,27 @@
 $(function() {
-    var $newButton = $('.newButton .button');
+    // Pages
     var $newPage = $('.new.page');
     var $lobbyPage = $('.lobby.page');
+    var $questionPage = $('.question.page');
+    var $currentPage = $newPage;
+
+    // Other jQuery elements
+    var $newButton = $('.newButton .button');
     var $gameCode = $('.code');
     var $lobbyList = $('.lobbyList');
     var $readyLabel = $('.readyLabel .label');
     var $startButton = $('.startButton .button');
-    var $questionPage = $('.question.page');
     var $questionRound = $('.question.page .title');
     var $questionLabel = $('.questionLabel .label');
 
     var socket = io();
     var round = 0;
+
+    function transitionTo($nextPage) {
+        $currentPage.fadeOut();
+        $nextPage.delay(400).fadeIn();
+        $currentPage = $nextPage;
+    }
 
     function updateStartButton(numUsers) {
         if (numUsers >= 2) {
@@ -36,8 +46,7 @@ $(function() {
     socket.on('code created', function (data) {
         console.log('game created with code = ' + data.gameCode);
         $gameCode.text(data.gameCode);
-        $newPage.fadeOut();
-        $lobbyPage.delay(400).fadeIn();
+        transitionTo($lobbyPage);
     });
 
     socket.on('host exists', function (data) {
@@ -61,7 +70,6 @@ $(function() {
         ++round;
         $questionRound.text('Round ' + round);
         $questionLabel.text(data.blackCard);
-        $lobbyPage.fadeOut();
-        $questionPage.delay(400).fadeIn();
+        transitionTo($questionPage);
     });
 });
