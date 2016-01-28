@@ -16,6 +16,16 @@ ul {
   width: 100%;
 }
 
+.wait.page {
+  display: none;
+}
+
+.card.page {
+  display: none;
+  text-align: center;
+  margin: auto;
+}
+
 .login.page .form {
   text-align: center;
   width: 400px;
@@ -53,7 +63,27 @@ ul {
   font-weight: 100;
 }
 
-.wait.page {
-  display: none;
+.cardList {
+    margin: 10px;
+}
+
+.cardButton {
+  color: #000;
+  background: #fff;
+  padding: 10px 20px 10px 20px;
+  border: solid #000 2px;
+  margin: 3px;
+}
+
+.cardButton:hover {
+  border: solid #3cb0fd 2px;
+}
+
+.cardButtonSelected {
+  color: #fff;
+  background: #3cb0fd;
+  padding: 10px 20px 10px 20px;
+  border: solid #fff 2px;
+  margin: 3px;
 }
 

@@ -2,6 +2,7 @@ $(function() {
     // Pages
     var $loginPage = $('.login.page');
     var $waitPage = $('.wait.page');
+    var $cardPage = $('.card.page');
     var $currentPage = $loginPage
 
     // Other jQuery elements
@@ -9,6 +10,7 @@ $(function() {
     var $usernameInput = $('.username .input');
     var $playButton = $('.playButton .button');
     var $welcomeLabel = $('.welcomeLabel .label');
+    var $cardList = $('.cardList');
 
     var socket = io();
 
@@ -48,9 +50,21 @@ $(function() {
     });
 
     socket.on('initial cards', function (data) {
-        console.log('Received ' + data.whiteCards.length + ' cards');
+        console.log('recieved ' + data.whiteCards.length + ' initial cards');
+        $cardList.empty();
         for (i = 0; i < data.whiteCards.length; i++) {
-            console.log('  ' + data.whiteCards[i]);
+            $cardList.append('<li class="whiteCard' + i +
+              '"><input class="cardButton" type="button" value="' +
+              data.whiteCards[i] + '"/></li>');
         }
+        $('.cardButton').each(cardClick(index, element)); {
+            console.log('register click for ' + index);
+            $(element).click(function() {
+                selectedCard = $(element).parent().attr('class');
+                console.log('selected ' + selectedCard);
+                $(element).attr('class', 'cardButtonSelected');
+            });
+        });
+        transitionTo($cardPage);
     });
 });
