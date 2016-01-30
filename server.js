@@ -39,6 +39,15 @@ io.on('connection', function (socket) {
         return text;
     }
 
+    function getBlackCard() {
+        cardText = 'The answer to this question is _';
+        numBlanks = (cardText.match(/_/g) || []).length;
+        return {
+            text: cardText,
+            blanks: numBlanks
+        };
+    }
+
     // The host wants to create a new game lobby
     socket.on('new game', function () {
         if (gameCode) {
@@ -82,10 +91,13 @@ io.on('connection', function (socket) {
     // The host has started the game
     socket.on('start game', function () {
         console.log('Game is starting!');
+        blackCard = getBlackCard();
         socket.emit('black card', {
-            blackCard: 'Sample black card'
+            text: blackCard.text
         });
-        socket.broadcast.emit('new round');
+        socket.broadcast.emit('new round', {
+            blanks: blackCard.blanks
+        });
     });
 
     // The client has requested some cards

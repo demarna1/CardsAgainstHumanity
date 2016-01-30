@@ -10,10 +10,12 @@ $(function() {
     var $usernameInput = $('.username .input');
     var $playButton = $('.playButton .button');
     var $welcomeLabel = $('.welcomeLabel .label');
+    var $waitingLabel = $('.waitingLabel .label');
     var $cardList = $('.cardList');
 
     var socket = io();
     var username = '';
+    var cardsToAnswer = 0;
 
     function transitionTo($nextPage) {
         $currentPage.fadeOut();
@@ -23,12 +25,24 @@ $(function() {
 
     function registerClicks() {
         $('.cardButton').click(function() {
-            console.log('card selected: ' + $(this).text());
+            if ($(this).attr('class') != 'cardButton' ||
+                cardsToAnswer <= 0) {
+                return;
+            }
+            done = (--cardsToAnswer == 0);
+            console.log('card selected: ' + $(this).text() +
+                ', cards to answer: ' + cardsToAnswer);
             $(this).attr('class', 'cardButtonSelected');
             socket.emit('answer card', {
                 username: username,
-                cardText: $(this).text()
+                cardText: $(this).text(),
+                done: done
             });
+            if (done) {
+                $welcomeLabel.text('Response submitted');
+                $waitingLabel.text('Waiting for other players...');
+                transitionTo($waitPage);
+            }
         });
     }
 
@@ -47,12 +61,16 @@ $(function() {
     socket.on('login success', function (data) {
         console.log(data.username + ' logged in');
         $welcomeLabel.text('Welcome, ' + data.username + '!');
+        $waitingLabel.text('Waiting to start a new round...');
         transitionTo($waitPage);
     });
 
-    socket.on('new round', function () {
+    socket.on('new round', function (data) {
+        cardsToAnswer = data.blanks;
+        $('.cardButtonSelected').parent().remove();
         cardsToRequest = 10 - $('.cardList li').length;
-        console.log('new round starting, need ' + cardsToRequest + ' cards');
+        console.log('new question, picking up ' + cardsToRequest + ' cards' +
+            '; need to answer: ' + cardsToAnswer);
         socket.emit('card request', {
             numCards: cardsToRequest
         });
@@ -73,6 +91,7 @@ $(function() {
 
     socket.on('host left', function (data) {
         $roomCodeInput.val('');
+        cardsToAnswer = 0;
         transitionTo($loginPage);
         socket.emit('user kicked');
         alert('Host from room ' + data.gameCode + ' has disconnected');

@@ -65,15 +65,16 @@ $(function() {
         $('.lobbyPlayer.' + data.username).remove();
         updateStartButton(data.numUsers);
         if (data.numUsers < 2) {
+            round = 0;
             transitionTo($lobbyPage);
         }
     });
 
     socket.on('black card', function (data) {
-        console.log('Q: ' + data.blackCard);
+        console.log('Q: ' + data.text);
         ++round;
         $questionRound.text('Round ' + round);
-        $questionLabel.text(data.blackCard);
+        $questionLabel.text(data.text);
         transitionTo($questionPage);
     });
 
