@@ -39,7 +39,7 @@ io.on('connection', function (socket) {
         return text;
     }
 
-    // The host wants to start a new game
+    // The host wants to create a new game lobby
     socket.on('new game', function () {
         if (gameCode) {
             socket.emit('host exists', {
@@ -85,8 +85,17 @@ io.on('connection', function (socket) {
         socket.emit('black card', {
             blackCard: 'Sample black card'
         });
-        whiteCards = ['Card1', 'Card2', 'Card3'];
-        socket.broadcast.emit('initial cards', {
+        socket.broadcast.emit('new round');
+    });
+
+    // The client has requested some cards
+    socket.on('card request', function (data) {
+        console.log('user requests ' + data.numCards + ' cards');
+        whiteCards = [];
+        for (i = 0; i < data.numCards; i++) {
+            whiteCards.push('This is card ' + i);
+        }
+        socket.broadcast.emit('white cards', {
             whiteCards: whiteCards
         });
     });

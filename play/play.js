@@ -20,6 +20,13 @@ $(function() {
         $currentPage = $nextPage;
     }
 
+    function registerClicks() {
+        $('.cardButton').click(function() {
+            console.log('card selected');
+            $(this).attr('class', 'cardButtonSelected');
+        });
+    }
+
     $playButton.click(function() {
         console.log('Play clicked');
         roomCode = $roomCodeInput.val().trim();
@@ -38,6 +45,23 @@ $(function() {
         transitionTo($waitPage);
     });
 
+    socket.on('new round', function () {
+        cardsToRequest = 10 - $('.cardList li').length;
+        console.log('new round starting, need ' + cardsToRequest + ' cards');
+        socket.emit('card request', {
+            numCards: cardsToRequest
+        });
+        transitionTo($cardPage);
+    });
+
+    socket.on('white cards', function (data) {
+        console.log('recieved ' + data.whiteCards.length + ' initial cards');
+        for (i = 0; i < data.whiteCards.length; i++) {
+            $cardList.append('<li class="whiteCard"><button class="cardButton">' + data.whiteCards[i] + '</button></li>');
+        }
+        registerClicks();
+    });
+
     socket.on('invalid code', function (data) {
         alert('Invalid room code: ' + data.roomCode);
     });
@@ -47,24 +71,5 @@ $(function() {
         transitionTo($loginPage);
         socket.emit('user kicked');
         alert('Host from room ' + data.gameCode + ' has disconnected');
-    });
-
-    socket.on('initial cards', function (data) {
-        console.log('recieved ' + data.whiteCards.length + ' initial cards');
-        $cardList.empty();
-        for (i = 0; i < data.whiteCards.length; i++) {
-            $cardList.append('<li class="whiteCard' + i +
-              '"><input class="cardButton" type="button" value="' +
-              data.whiteCards[i] + '"/></li>');
-        }
-        $('.cardButton').each(cardClick(index, element)); {
-            console.log('register click for ' + index);
-            $(element).click(function() {
-                selectedCard = $(element).parent().attr('class');
-                console.log('selected ' + selectedCard);
-                $(element).attr('class', 'cardButtonSelected');
-            });
-        });
-        transitionTo($cardPage);
     });
 });
