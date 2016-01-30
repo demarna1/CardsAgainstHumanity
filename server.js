@@ -95,8 +95,17 @@ io.on('connection', function (socket) {
         for (i = 0; i < data.numCards; i++) {
             whiteCards.push('This is card ' + i);
         }
-        socket.broadcast.emit('white cards', {
+        socket.emit('white cards', {
             whiteCards: whiteCards
+        });
+    });
+
+    // The client has submitted an answer card
+    socket.on('answer card', function (data) {
+        console.log('received answer from ' + data.username);
+        socket.broadcast.emit('user answered', {
+            username: data.username,
+            cardText: data.cardText
         });
     });
 

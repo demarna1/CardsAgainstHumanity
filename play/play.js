@@ -13,6 +13,7 @@ $(function() {
     var $cardList = $('.cardList');
 
     var socket = io();
+    var username = '';
 
     function transitionTo($nextPage) {
         $currentPage.fadeOut();
@@ -22,8 +23,12 @@ $(function() {
 
     function registerClicks() {
         $('.cardButton').click(function() {
-            console.log('card selected');
+            console.log('card selected: ' + $(this).text());
             $(this).attr('class', 'cardButtonSelected');
+            socket.emit('answer card', {
+                username: username,
+                cardText: $(this).text()
+            });
         });
     }
 

@@ -18,6 +18,7 @@ $(function() {
     var round = 0;
 
     function transitionTo($nextPage) {
+        if ($currentPage == $nextPage) return;
         $currentPage.fadeOut();
         $nextPage.delay(400).fadeIn();
         $currentPage = $nextPage;
@@ -63,6 +64,9 @@ $(function() {
         console.log('user ' + data.username + ' left the game');
         $('.lobbyPlayer.' + data.username).remove();
         updateStartButton(data.numUsers);
+        if (data.numUsers < 2) {
+            transitionTo($lobbyPage);
+        }
     });
 
     socket.on('black card', function (data) {
@@ -71,5 +75,9 @@ $(function() {
         $questionRound.text('Round ' + round);
         $questionLabel.text(data.blackCard);
         transitionTo($questionPage);
+    });
+
+    socket.on('user answered', function (data) {
+        console.log(data.username + ' answered');
     });
 });
