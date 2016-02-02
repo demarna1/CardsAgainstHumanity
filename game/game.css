@@ -28,7 +28,7 @@ ul {
   margin: auto;
 }
 
-.label, .lobbyPlayer {
+.label, .lobbyPlayer, .answeredPlayer {
   color: #fff;
   font-weight: 100;
 }
@@ -39,11 +39,11 @@ ul {
   letter-spacing: 1px;
 }
 
-.lobbyList {
+.lobbyList, .answeredList {
   margin: 15px;
 }
 
-.lobbyPlayer, .questionLabel .label {
+.lobbyPlayer, .answeredPlayer, .questionLabel .label {
   font-size: 150%;
 }
 

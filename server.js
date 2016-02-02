@@ -22,8 +22,8 @@ server.listen(port, function() {
     console.log('Server listening on port %d', port);
 });
 
-var numUsers = 0;
 var gameCode = '';
+var players = [];
 
 io.on('connection', function (socket) {
     var addedUser = false;
@@ -68,23 +68,23 @@ io.on('connection', function (socket) {
     socket.on('login', function (data) {
         roomCode = data.roomCode.toUpperCase();
         if (roomCode !== gameCode) {
-            socket.emit('invalid code', {
-                roomCode: roomCode
+            socket.emit('login error', {
+                error: 'invalid room code ' + data.roomCode
+            });
+            return;
+        } else if (players.indexOf(data.username) > -1) {
+            socket.emit('login error', {
+                error: 'name ' + data.username + ' already taken'
             });
             return;
         }
         socket.username = data.username;
-        socket.roomCode = roomCode;
-        ++numUsers;
         addedUser = true;
+        players.push(data.username);
         console.log(data.username + ' joined room ' + roomCode);
-        console.log('numUsers = ' + numUsers);
-        socket.emit('login success', {
-            username: data.username
-        });
+        socket.emit('login success');
         socket.broadcast.emit('user joined', {
-            username: socket.username,
-            numUsers: numUsers
+            players: players
         });
     });
 
@@ -116,8 +116,9 @@ io.on('connection', function (socket) {
     socket.on('answer card', function (data) {
         console.log('received answer from ' + data.username);
         socket.broadcast.emit('user answered', {
-            username: data.username,
-            cardText: data.cardText
+            username: socket.username,
+            cardText: data.cardText,
+            done: data.done
         });
     });
 
@@ -125,20 +126,20 @@ io.on('connection', function (socket) {
     socket.on('user kicked', function () {
         if (addedUser) {
             addedUser = false;
-            --numUsers;
+            index = players.indexOf(socket.username);
+            if (index > -1) players.splice(index, 1);
         }
     });
 
     // The client or game host has disconnected
     socket.on('disconnect', function () {
         if (addedUser) {
-            --numUsers;
+            index = players.indexOf(socket.username);
+            if (index > -1) players.splice(index, 1);
             console.log(socket.username + ' left room ' + socket.roomCode);
-            console.log('numUsers = ' + numUsers);
             // echo globally that this client has left
             socket.broadcast.emit('user left', {
-                username: socket.username,
-                numUsers: numUsers
+                players: players
             });
         }
         if (addedGame) {

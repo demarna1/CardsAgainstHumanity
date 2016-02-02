@@ -13,9 +13,11 @@ $(function() {
     var $startButton = $('.startButton .button');
     var $questionRound = $('.question.page .title');
     var $questionLabel = $('.questionLabel .label');
+    var $answeredList = $('.answeredList');
 
     var socket = io();
     var round = 0;
+    var players = [];
 
     function transitionTo($nextPage) {
         if ($currentPage == $nextPage) return;
@@ -24,28 +26,29 @@ $(function() {
         $currentPage = $nextPage;
     }
 
-    function updateStartButton(numUsers) {
-        if (numUsers >= 2) {
+    function updateLobby() {
+        $lobbyList.empty();
+        for (i = 0; i < players.length; i++) {
+            $lobbyList.append('<li class="lobbyPlayer">' + players[i] + '</li>');
+        }
+        if (players.length >= 2) {
             $readyLabel.text('All players ready?');
             $startButton.removeAttr('disabled');
         } else {
-            $readyLabel.text('Need ' + (2 - numUsers) + ' more player(s).');
+            $readyLabel.text('Need ' + (2 - players.length) + ' more player(s).');
             $startButton.attr('disabled', 'disabled');
         }
     }
 
     $newButton.click(function() {
-        console.log('New game clicked');
         socket.emit('new game');
     });
 
     $startButton.click(function() {
-        console.log('Start game clicked');
         socket.emit('start game');
     });
 
     socket.on('code created', function (data) {
-        console.log('game created with code = ' + data.gameCode);
         $gameCode.text(data.gameCode);
         transitionTo($lobbyPage);
     });
@@ -55,16 +58,16 @@ $(function() {
     });
 
     socket.on('user joined', function (data) {
-        console.log('adding user ' + data.username + ' to game');
-        $lobbyList.append('<li class="lobbyPlayer ' + data.username + '">' + data.username + '</li>');
-        updateStartButton(data.numUsers);
+        players = data.players;
+        console.log('user joined, numPlayers = ' + players.length);
+        updateLobby();
     });
 
     socket.on('user left', function (data) {
-        console.log('user ' + data.username + ' left the game');
-        $('.lobbyPlayer.' + data.username).remove();
-        updateStartButton(data.numUsers);
-        if (data.numUsers < 2) {
+        players = data.players;
+        console.log('user left, numPlayers = ' + players.length);
+        updateLobby();
+        if (players.length < 2) {
             round = 0;
             transitionTo($lobbyPage);
         }
@@ -80,5 +83,7 @@ $(function() {
 
     socket.on('user answered', function (data) {
         console.log(data.username + ' answered');
+        $answeredList.append('<li class="answeredPlayer">' +
+            data.username + '</li>');
     });
 });

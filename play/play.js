@@ -34,7 +34,6 @@ $(function() {
                 ', cards to answer: ' + cardsToAnswer);
             $(this).attr('class', 'cardButtonSelected');
             socket.emit('answer card', {
-                username: username,
                 cardText: $(this).text(),
                 done: done
             });
@@ -58,9 +57,9 @@ $(function() {
         }
     });
 
-    socket.on('login success', function (data) {
-        console.log(data.username + ' logged in');
-        $welcomeLabel.text('Welcome, ' + data.username + '!');
+    socket.on('login success', function () {
+        console.log(username + ' logged in');
+        $welcomeLabel.text('Welcome, ' + username + '!');
         $waitingLabel.text('Waiting to start a new round...');
         transitionTo($waitPage);
     });
@@ -85,8 +84,8 @@ $(function() {
         registerClicks();
     });
 
-    socket.on('invalid code', function (data) {
-        alert('Invalid room code: ' + data.roomCode);
+    socket.on('login error', function (data) {
+        alert('Error joining: invalid room code ' + data.roomCode);
     });
 
     socket.on('host left', function (data) {
