@@ -4,10 +4,23 @@ The Cards Against Humanity game as an online application using Node.js and socke
 
 ### How to use
 
+Clone and get dependencies:
 ```
 $ git clone https://github.com/demarna1/CardsAgainstHumanity.git
 $ cd CardsAgainstHumanity
 $ npm install
+```
+
+Download Ivona credentials from here: https://www.ivona.com/us/account/speechcloud/credentials
+
+Place credentials in proper location:
+```
+$ mkdir cred
+$ mv ~/Downloads/credentials_*.txt cred/ivona_cred.txt
+```
+
+Start the server with:
+```
 $ node server.js
 ```
 

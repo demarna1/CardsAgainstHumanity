@@ -2,6 +2,8 @@ var express = require('express')
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+var ivonaNode = require('ivona-node');
+var fs = require('fs');
 var port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname + '/main'));
@@ -17,6 +19,9 @@ app.get('/play', function(req, res) {
 app.get('/game', function(req, res) {
     res.sendFile(__dirname + '/game/game.html');
 });
+app.get('/game/currentq.mp3', function(req, res) {
+    res.sendFile(__dirname + '/game/currentq.mp3');
+});
 
 server.listen(port, function() {
     console.log('Server listening on port %d', port);
@@ -24,6 +29,30 @@ server.listen(port, function() {
 
 var gameCode = '';
 var players = [];
+var lineReader = require('readline').createInterface({
+    input: fs.createReadStream(__dirname + '/cred/ivona_cred.txt')
+});
+var accessKey = '';
+var secretKey = '';
+var lineNo = 0;
+var ivona = null;
+lineReader.on('line', function (line) {
+    if (lineNo == 0) {
+        accessKey = line.split('=')[1];
+    } else if (lineNo == 1) {
+        secretKey = line.split('=')[1];
+        ivona = new ivonaNode({
+            accessKey: accessKey,
+            secretKey: secretKey
+        });
+    }
+    ++lineNo;
+});
+var appVoice = { body: { voice: {
+    name: 'Salli',
+    language: 'en-US',
+    gender: 'Female'
+}}};
 
 io.on('connection', function (socket) {
     var addedUser = false;
@@ -42,6 +71,12 @@ io.on('connection', function (socket) {
     function getBlackCard() {
         cardText = 'The answer to this question is _';
         numBlanks = (cardText.match(/_/g) || []).length;
+        audioFile = fs.createWriteStream(__dirname + '/game/currentq.mp3');
+        ttv = cardText.replace(/_/g, 'blank');
+        stream = ivona.createVoice(ttv, appVoice).pipe(audioFile);
+        stream.on('finish', function () {
+            socket.emit('audio finished');
+        });
         return {
             text: cardText,
             blanks: numBlanks

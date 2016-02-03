@@ -1,10 +1,11 @@
 {
   "name": "cah-node",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Cards Against Humanity using Node.js and socket.io",
   "author": "Noah DeMarco",
   "dependencies": {
     "express": "^4.13.3",
+    "ivona-node": "^0.2.0",
     "socket.io": "^1.4.4"
   }
 }

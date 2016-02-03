@@ -81,6 +81,11 @@ $(function() {
         transitionTo($questionPage);
     });
 
+    socket.on('audio finished', function () {
+        audio = new Audio('/game/currentq.mp3');
+        audio.play();
+    });
+
     socket.on('user answered', function (data) {
         console.log(data.username + ' answered');
         $answeredList.append('<li class="answeredPlayer">' +
