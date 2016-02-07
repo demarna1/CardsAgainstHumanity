@@ -19,12 +19,11 @@ create table white_cards (id bigserial primary key, text varchar(200) not null, 
 
 ### Import cards to local database
 ```
-heroku config -s
-export DATABASE_URL=`heroku config -s | grep DATABASE_URL | cut -f2 -d"'"`
-node import.js
+node import.js cah-set.json
 ```
 
 ### Push to remote database
 ```
-heroku pg:push noah HEROKU_POSTGRESQL_COPPER
+heroku pg:push cah-node HEROKU_POSTGRESQL_COPPER
+heroku pg:psql
 ```

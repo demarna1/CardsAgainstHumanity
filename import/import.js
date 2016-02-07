@@ -22,33 +22,37 @@ client.connect(function (err) {
     }
     console.log('Connected to database cah-node');
 
-    // Insert black cards
-    for (i = 0; i < cards.blackCards.length; i++) {
-        blackCard = cards.blackCards[i];
-        client.query('insert into black_cards (text, pick, used, set) values ($1, $2, $3, $4)',
-            [blackCard.text, blackCard.pick, 'false', set], function (err, result) {
-            if (err) {
-                console.log(err);
-            }
-            console.log('success');
-        });
-        break;
-    }
-    console.log('Inserted ' + cards.blackCards.length + ' black cards into database');
+    async.parallel([
+        // Insert black cards
+        function(callback) {
+            var blackCardSql = 'insert into black_cards (text, pick, used, set) values ($1, $2, $3, $4)';
+            async.each(cards.blackCards, function(blackCard, callback) {
+                client.query(blackCardSql, [blackCard.text, blackCard.pick, 'false', set], callback);
+            }, function(err) {
+                if (err) return callback(err);
+                console.log('Inserted ' + cards.blackCards.length + ' black cards into database');
+                callback();
+            });
+        },
 
-    // Insert white cards
-    for (i = 0; i < cards.whiteCards.length; i++) {
-        whiteCard = cards.whiteCards[i];
-        client.query('insert into white_cards (text, used, set) values ($1, $2, $3)',
-            [whiteCard, 'false', set], function (err, result) {
-            if (err) {
-                console.log(err);
-            }
-            console.log('success');
-        });
-        break;
-    }
-    console.log('Inserted ' + cards.whiteCards.length + ' white cards into database');
-
-    client.end();
+        // Insert white cards
+        function(callback) {
+            var whiteCardSql = 'insert into white_cards (text, used, set) values ($1, $2, $3)';
+            async.each(cards.whiteCards, function(whiteCard, callback) {
+                client.query(whiteCardSql, [whiteCard, 'false', set], callback);
+            }, function(err) {
+                if (err) return callback(err);
+                console.log('Inserted ' + cards.whiteCards.length + ' white cards into database');
+                callback();
+            });
+        }
+    ], function(err) {
+        if (err) {
+            console.log(err);
+            client.end();
+            return;
+        }
+        client.end();
+        console.log('Done... disconnected from database');
+    });
 });
