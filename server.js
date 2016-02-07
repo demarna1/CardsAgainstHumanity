@@ -4,6 +4,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var ivonaNode = require('ivona-node');
 var fs = require('fs');
+var db = require('./db');
 var port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname + '/main'));
@@ -68,21 +69,6 @@ io.on('connection', function (socket) {
         return text;
     }
 
-    function getBlackCard() {
-        cardText = 'The answer to this question is _';
-        numBlanks = (cardText.match(/_/g) || []).length;
-        audioFile = fs.createWriteStream(__dirname + '/game/currentq.mp3');
-        ttv = cardText.replace(/_/g, 'blank');
-        stream = ivona.createVoice(ttv, appVoice).pipe(audioFile);
-        stream.on('finish', function () {
-            socket.emit('audio finished');
-        });
-        return {
-            text: cardText,
-            blanks: numBlanks
-        };
-    }
-
     // The host wants to create a new game lobby
     socket.on('new game', function () {
         if (gameCode) {
@@ -126,24 +112,31 @@ io.on('connection', function (socket) {
     // The host has started the game
     socket.on('start game', function () {
         console.log('Game is starting!');
-        blackCard = getBlackCard();
-        socket.emit('black card', {
-            text: blackCard.text
-        });
-        socket.broadcast.emit('new round', {
-            blanks: blackCard.blanks
+        db.blackCard(function (err, blackCard) {
+            if (err) return console.log(err);
+            audioFile = fs.createWriteStream(__dirname + '/game/currentq.mp3');
+            ttv = blackCard.text.replace(/_/g, 'blank');
+            stream = ivona.createVoice(ttv, appVoice).pipe(audioFile);
+            stream.on('finish', function() {
+                socket.emit('audio finished');
+            });
+            socket.emit('black card', {
+                text: blackCard.text
+            });
+            socket.broadcast.emit('new round', {
+                pick: blackCard.pick
+            });
         });
     });
 
     // The client has requested some cards
     socket.on('card request', function (data) {
         console.log('user requests ' + data.numCards + ' cards');
-        whiteCards = [];
-        for (i = 0; i < data.numCards; i++) {
-            whiteCards.push('This is card ' + i);
-        }
-        socket.emit('white cards', {
-            whiteCards: whiteCards
+        db.whiteCards(data.numCards, function(err, whiteCards) {
+            if (err) return console.log(err);
+            socket.emit('white cards', {
+                whiteCards: whiteCards
+            });
         });
     });
 
@@ -172,7 +165,6 @@ io.on('connection', function (socket) {
             index = players.indexOf(socket.username);
             if (index > -1) players.splice(index, 1);
             console.log(socket.username + ' left room ' + socket.roomCode);
-            // echo globally that this client has left
             socket.broadcast.emit('user left', {
                 players: players
             });

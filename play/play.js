@@ -65,7 +65,7 @@ $(function() {
     });
 
     socket.on('new round', function (data) {
-        cardsToAnswer = data.blanks;
+        cardsToAnswer = data.pick;
         $('.cardButtonSelected').parent().remove();
         cardsToRequest = 10 - $('.cardList li').length;
         console.log('new question, picking up ' + cardsToRequest + ' cards' +
