@@ -4,7 +4,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var ivonaNode = require('ivona-node');
 var fs = require('fs');
-var db = require('./db');
+var db = require('./db/db.js');
 var port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname + '/main'));
@@ -50,9 +50,9 @@ lineReader.on('line', function (line) {
     ++lineNo;
 });
 var appVoice = { body: { voice: {
-    name: 'Salli',
-    language: 'en-US',
-    gender: 'Female'
+    name: 'Brian',
+    language: 'en-GB',
+    gender: 'Male'
 }}};
 
 io.on('connection', function (socket) {

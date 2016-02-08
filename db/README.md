@@ -24,6 +24,7 @@ node import.js cah-set.json
 
 ### Push to remote database
 ```
+heroku pg:reset --confirm cah-node HEROKU_POSTGRESQL_COPPER
 heroku pg:push cah-node HEROKU_POSTGRESQL_COPPER
 heroku pg:psql
 ```
