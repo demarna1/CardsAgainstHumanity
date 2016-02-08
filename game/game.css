@@ -16,13 +16,7 @@ ul {
   width: 100%;
 }
 
-.lobby.page {
-  display: none;
-  text-align: center;
-  margin: auto;
-}
-
-.question.page {
+.lobby.page, .question.page, .vote.page {
   display: none;
   text-align: center;
   margin: auto;

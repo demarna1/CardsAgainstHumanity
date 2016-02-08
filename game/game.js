@@ -3,6 +3,7 @@ $(function() {
     var $newPage = $('.new.page');
     var $lobbyPage = $('.lobby.page');
     var $questionPage = $('.question.page');
+    var $votePage = $('.vote.page');
     var $currentPage = $newPage;
 
     // Other jQuery elements
@@ -18,6 +19,7 @@ $(function() {
     var socket = io();
     var round = 0;
     var players = [];
+    var submissions = {};
 
     function transitionTo($nextPage) {
         if ($currentPage == $nextPage) return;
@@ -69,6 +71,7 @@ $(function() {
         updateLobby();
         if (players.length < 2) {
             round = 0;
+            submissions = {};
             transitionTo($lobbyPage);
         }
     });
@@ -88,7 +91,28 @@ $(function() {
 
     socket.on('user answered', function (data) {
         console.log(data.username + ' answered');
-        $answeredList.append('<li class="answeredPlayer">' +
-            data.username + '</li>');
+        if (data.username in submissions) {
+            submissions[data.username].cards.push(data.cardText);
+        } else {
+            submissions[data.username] = {
+                done: false,
+                cards: [data.cardText]
+            };
+        }
+        if (data.done) {
+            console.log(data.username + ' is done');
+            submissions[data.username].done = true;
+            $answeredList.append('<li class="answeredPlayer">' +
+                data.username + '</li>');
+        }
+        transition = true;
+        count = 0;
+        for (var i in submissions) {
+            transition &= submissions[i].done;
+            count++;
+        }
+        if (transition && count >= players.length) {
+            transitionTo($votePage);
+        }
     });
 });

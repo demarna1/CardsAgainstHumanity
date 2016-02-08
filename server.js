@@ -142,7 +142,7 @@ io.on('connection', function (socket) {
 
     // The client has submitted an answer card
     socket.on('answer card', function (data) {
-        console.log('received answer from ' + data.username);
+        console.log('received answer from ' + socket.username);
         socket.broadcast.emit('user answered', {
             username: socket.username,
             cardText: data.cardText,
