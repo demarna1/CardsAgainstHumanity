@@ -164,7 +164,7 @@ io.on('connection', function (socket) {
         if (addedUser) {
             index = players.indexOf(socket.username);
             if (index > -1) players.splice(index, 1);
-            console.log(socket.username + ' left room ' + socket.roomCode);
+            console.log(socket.username + ' left room');
             socket.broadcast.emit('user left', {
                 players: players
             });
