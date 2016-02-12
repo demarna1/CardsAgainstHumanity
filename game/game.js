@@ -15,11 +15,13 @@ $(function() {
     var $questionRound = $('.question.page .title');
     var $questionLabel = $('.questionLabel .label');
     var $answeredList = $('.answeredList');
+    var $roundTimer = $('.roundTimer');
 
     var socket = io();
     var round = 0;
     var players = [];
     var submissions = {};
+    var timerInvervalId = 0;
 
     function transitionTo($nextPage) {
         if ($currentPage == $nextPage) return;
@@ -40,6 +42,24 @@ $(function() {
             $readyLabel.text('Need ' + (2 - players.length) + ' more player(s).');
             $startButton.attr('disabled', 'disabled');
         }
+    }
+
+    function endRound() {
+        clearInterval(timerIntervalId);
+        transitionTo($votePage);
+        socket.emit('round over', {
+            submissions: submissions
+        });
+    }
+
+    function startTimer(timer, duration) {
+        timeLeft = duration;
+        timerIntervalId = setInterval(function() {
+            timer.text(timeLeft);
+            if (--timeLeft < 0) {
+                endRound();
+            }
+        }, 1000);
     }
 
     $newButton.click(function() {
@@ -82,6 +102,7 @@ $(function() {
         $questionRound.text('Round ' + round);
         $questionLabel.text(data.text);
         transitionTo($questionPage);
+        startTimer($roundTimer, 10 + 10*data.pick);
     });
 
     socket.on('audio finished', function () {
@@ -112,7 +133,7 @@ $(function() {
             count++;
         }
         if (transition && count >= players.length) {
-            transitionTo($votePage);
+            endRound();
         }
     });
 });

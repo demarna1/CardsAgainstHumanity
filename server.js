@@ -121,7 +121,8 @@ io.on('connection', function (socket) {
                 socket.emit('audio finished');
             });
             socket.emit('black card', {
-                text: blackCard.text
+                text: blackCard.text,
+                pick: blackCard.pick
             });
             socket.broadcast.emit('new round', {
                 pick: blackCard.pick
@@ -147,6 +148,14 @@ io.on('connection', function (socket) {
             username: socket.username,
             cardText: data.cardText,
             done: data.done
+        });
+    });
+
+    // The game round is over
+    socket.on('round over', function (data) {
+        console.log('round over, all users submitted');
+        socket.broadcast.emit('round over', {
+            submissions: data.submissions
         });
     });
 

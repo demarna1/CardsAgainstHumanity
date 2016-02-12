@@ -16,6 +16,12 @@ ul {
   width: 100%;
 }
 
+.login.page .form {
+  text-align: center;
+  width: 400px;
+  margin: auto;
+}
+
 .wait.page {
   display: none;
 }
@@ -26,10 +32,8 @@ ul {
   margin: auto;
 }
 
-.login.page .form {
-  text-align: center;
-  width: 400px;
-  margin: auto;
+.vote.page {
+  display: none;
 }
 
 .roomCode, .username {

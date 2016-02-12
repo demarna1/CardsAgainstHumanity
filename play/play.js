@@ -3,6 +3,7 @@ $(function() {
     var $loginPage = $('.login.page');
     var $waitPage = $('.wait.page');
     var $cardPage = $('.card.page');
+    var $votePage = $('.vote.page');
     var $currentPage = $loginPage
 
     // Other jQuery elements
@@ -84,8 +85,12 @@ $(function() {
         registerClicks();
     });
 
+    socket.on('round over', function (data) {
+        transitionTo($votePage);
+    });
+
     socket.on('login error', function (data) {
-        alert('Error joining: invalid room code ' + data.roomCode);
+        alert('Error joining: ' + data.error);
     });
 
     socket.on('host left', function (data) {
