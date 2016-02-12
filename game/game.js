@@ -21,7 +21,6 @@ $(function() {
     var round = 0;
     var players = [];
     var submissions = {};
-    var timerInvervalId = 0;
 
     function transitionTo($nextPage) {
         if ($currentPage == $nextPage) return;
@@ -45,7 +44,6 @@ $(function() {
     }
 
     function endRound() {
-        clearInterval(timerIntervalId);
         transitionTo($votePage);
         socket.emit('round over', {
             submissions: submissions
@@ -57,7 +55,10 @@ $(function() {
         timerIntervalId = setInterval(function() {
             timer.text(timeLeft);
             if (--timeLeft < 0) {
-                endRound();
+                clearInterval(timerIntervalId);
+                if ($currentPage == $questionPage) {
+                    endRound();
+                }
             }
         }, 1000);
     }
@@ -128,8 +129,8 @@ $(function() {
         }
         transition = true;
         count = 0;
-        for (var i in submissions) {
-            transition &= submissions[i].done;
+        for (var user in submissions) {
+            transition &= submissions[user].done;
             count++;
         }
         if (transition && count >= players.length) {

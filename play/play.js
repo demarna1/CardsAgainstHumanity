@@ -13,6 +13,7 @@ $(function() {
     var $welcomeLabel = $('.welcomeLabel .label');
     var $waitingLabel = $('.waitingLabel .label');
     var $cardList = $('.cardList');
+    var $voteList = $('.voteList');
 
     var socket = io();
     var username = '';
@@ -24,7 +25,7 @@ $(function() {
         $currentPage = $nextPage;
     }
 
-    function registerClicks() {
+    function registerClicks(message) {
         $('.cardButton').click(function() {
             if ($(this).attr('class') != 'cardButton' ||
                 cardsToAnswer <= 0) {
@@ -34,7 +35,7 @@ $(function() {
             console.log('card selected: ' + $(this).text() +
                 ', cards to answer: ' + cardsToAnswer);
             $(this).attr('class', 'cardButtonSelected');
-            socket.emit('answer card', {
+            socket.emit(message, {
                 cardText: $(this).text(),
                 done: done
             });
@@ -82,11 +83,23 @@ $(function() {
         for (i = 0; i < data.whiteCards.length; i++) {
             $cardList.append('<li class="whiteCard"><button class="cardButton">' + data.whiteCards[i] + '</button></li>');
         }
-        registerClicks();
+        registerClicks('answer card');
     });
 
     socket.on('round over', function (data) {
         transitionTo($votePage);
+        $voteList.empty();
+        for (var user in data.submissions) {
+            if (user == username) continue;
+            cards = data.submissions[user].cards;
+            voteText = cards[0];
+            for (i = 1; i < cards.length; i++) {
+                voteText += ' / ' + cards[i];
+            }
+            $voteList.append('<li class="whiteCard"><button class="cardButton">' + voteText + '</button></li>');
+        }
+        cardsToAnswer = 1;
+        registerClicks('vote card');
     });
 
     socket.on('login error', function (data) {

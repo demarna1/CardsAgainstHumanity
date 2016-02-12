@@ -159,6 +159,16 @@ io.on('connection', function (socket) {
         });
     });
 
+    // The client has submitted their vote
+    socket.on('vote card', function (data) {
+        console.log('received vote from ' + socket.username);
+        socket.broadcast.emit('user voted', {
+            username: socket.username,
+            cardText: data.cardText,
+            done: data.done
+        });
+    });
+
     // The client was kicked from the room
     socket.on('user kicked', function () {
         if (addedUser) {

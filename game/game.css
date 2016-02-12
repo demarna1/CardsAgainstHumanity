@@ -41,6 +41,10 @@ ul {
   font-size: 150%;
 }
 
+.questionLabel {
+  margin-top: 15px;
+}
+
 .startButton {
   margin: 10px;
 }
