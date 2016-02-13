@@ -31,7 +31,7 @@ $(function() {
                 cardsToAnswer <= 0) {
                 return;
             }
-            done = (--cardsToAnswer == 0);
+            var done = (--cardsToAnswer == 0);
             console.log('card selected: ' + $(this).text() +
                 ', cards to answer: ' + cardsToAnswer);
             $(this).attr('class', 'cardButtonSelected');
@@ -49,7 +49,7 @@ $(function() {
 
     $playButton.click(function() {
         console.log('Play clicked');
-        roomCode = $roomCodeInput.val().trim();
+        var roomCode = $roomCodeInput.val().trim();
         username = $usernameInput.val().trim();
         if (roomCode.length == 4 && username) {
             socket.emit('login', {
@@ -69,7 +69,7 @@ $(function() {
     socket.on('new round', function (data) {
         cardsToAnswer = data.pick;
         $('.cardButtonSelected').parent().remove();
-        cardsToRequest = 10 - $('.cardList li').length;
+        var cardsToRequest = 10 - $('.cardList li').length;
         console.log('new question, picking up ' + cardsToRequest + ' cards' +
             '; need to answer: ' + cardsToAnswer);
         socket.emit('card request', {
@@ -80,7 +80,7 @@ $(function() {
 
     socket.on('white cards', function (data) {
         console.log('recieved ' + data.whiteCards.length + ' initial cards');
-        for (i = 0; i < data.whiteCards.length; i++) {
+        for (var i = 0; i < data.whiteCards.length; i++) {
             $cardList.append('<li class="whiteCard"><button class="cardButton">' + data.whiteCards[i] + '</button></li>');
         }
         registerClicks('answer card');
@@ -91,9 +91,9 @@ $(function() {
         $voteList.empty();
         for (var user in data.submissions) {
             if (user == username) continue;
-            cards = data.submissions[user].cards;
-            voteText = cards[0];
-            for (i = 1; i < cards.length; i++) {
+            var cards = data.submissions[user].cards;
+            var voteText = cards[0];
+            for (var i = 1; i < cards.length; i++) {
                 voteText += ' / ' + cards[i];
             }
             $voteList.append('<li class="whiteCard"><button class="cardButton">' + voteText + '</button></li>');

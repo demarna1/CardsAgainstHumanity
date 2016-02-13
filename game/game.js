@@ -16,11 +16,15 @@ $(function() {
     var $questionLabel = $('.questionLabel .label');
     var $answeredList = $('.answeredList');
     var $roundTimer = $('.roundTimer');
+    var $submittedList = $('.submittedList');
+    var $voteTimer = $('.voteTimer');
+    var $votedList = $('.votedList');
 
     var socket = io();
     var round = 0;
     var players = [];
     var submissions = {};
+    var votes = [];
 
     function transitionTo($nextPage) {
         if ($currentPage == $nextPage) return;
@@ -31,7 +35,7 @@ $(function() {
 
     function updateLobby() {
         $lobbyList.empty();
-        for (i = 0; i < players.length; i++) {
+        for (var i = 0; i < players.length; i++) {
             $lobbyList.append('<li class="lobbyPlayer">' + players[i] + '</li>');
         }
         if (players.length >= 2) {
@@ -43,24 +47,43 @@ $(function() {
         }
     }
 
-    function endRound() {
-        transitionTo($votePage);
-        socket.emit('round over', {
-            submissions: submissions
-        });
-    }
-
-    function startTimer(timer, duration) {
-        timeLeft = duration;
-        timerIntervalId = setInterval(function() {
+    function startTimer(timer, duration, $triggerPage, triggerCallback) {
+        var timeLeft = duration;
+        var timerIntervalId = setInterval(function() {
             timer.text(timeLeft);
             if (--timeLeft < 0) {
+                console.log('clearing timer interval');
                 clearInterval(timerIntervalId);
-                if ($currentPage == $questionPage) {
-                    endRound();
+                if ($currentPage == $triggerPage) {
+                    triggerCallback();
                 }
             }
         }, 1000);
+    }
+
+    function endRound() {
+        socket.emit('round over', {
+            submissions: submissions
+        });
+        $votedList.empty();
+        $submittedList.empty();
+        transitionTo($votePage);
+        startTimer($voteTimer, 20, $votePage, endVoting);
+        for (var user in submissions) {
+            var cards = submissions[user].cards;
+            var submissionText = cards[0];
+            for (var i = 1; i < cards.length; i++) {
+                submissionText += ' / ' + cards[i];
+            }
+            $submittedList.append('<li class="whiteCard"><button class="cardSpan">' + submissionText + '</button></li>');
+        }
+    }
+
+    function endVoting() {
+        console.log('voting has ended');
+        votes = [];
+        submissions = {};
+        socket.emit('start game');
     }
 
     $newButton.click(function() {
@@ -103,11 +126,11 @@ $(function() {
         $questionRound.text('Round ' + round);
         $questionLabel.text(data.text);
         transitionTo($questionPage);
-        startTimer($roundTimer, 10 + 10*data.pick);
+        startTimer($roundTimer, 15 + 10*data.pick, $questionPage, endRound);
     });
 
     socket.on('audio finished', function () {
-        audio = new Audio('/game/currentq.mp3');
+        var audio = new Audio('/game/currentq.mp3');
         audio.play();
     });
 
@@ -127,14 +150,27 @@ $(function() {
             $answeredList.append('<li class="answeredPlayer">' +
                 data.username + '</li>');
         }
-        transition = true;
-        count = 0;
+        var transition = true;
+        var count = 0;
         for (var user in submissions) {
             transition &= submissions[user].done;
             count++;
         }
         if (transition && count >= players.length) {
             endRound();
+        }
+    });
+
+    socket.on('user voted', function (data) {
+        console.log(data.username + ' voted');
+        // TODO: add support for more than one vote
+        if (data.done) {
+            $votedList.append('<li class="answeredPlayer">' +
+                data.username + '</li>');
+            votes.push(data.cardText);
+            if (votes.length >= players.length) {
+                endVoting();
+            }
         }
     });
 });

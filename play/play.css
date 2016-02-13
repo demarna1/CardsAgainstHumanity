@@ -67,7 +67,7 @@ ul {
   font-weight: 100;
 }
 
-.cardList {
+.cardList, .voteList {
     margin: 10px;
 }
 

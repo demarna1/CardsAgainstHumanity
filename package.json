@@ -1,6 +1,6 @@
 {
   "name": "cah-node",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Cards Against Humanity using Node.js and socket.io",
   "author": "Noah DeMarco",
   "dependencies": {

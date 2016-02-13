@@ -33,7 +33,7 @@ ul {
   letter-spacing: 1px;
 }
 
-.lobbyList, .answeredList {
+.lobbyList, .answeredList, .submittedList, .votedList {
   margin: 15px;
 }
 
@@ -47,5 +47,12 @@ ul {
 
 .startButton {
   margin: 10px;
+}
+
+.cardSpan {
+  color: #000;
+  background: #fff;
+  padding: 10px 20px 10px 20px;
+  margin: 3px;
 }
 

@@ -87,7 +87,7 @@ io.on('connection', function (socket) {
 
     // The client is logging into a room
     socket.on('login', function (data) {
-        roomCode = data.roomCode.toUpperCase();
+        var roomCode = data.roomCode.toUpperCase();
         if (roomCode !== gameCode) {
             socket.emit('login error', {
                 error: 'invalid room code ' + data.roomCode
@@ -114,9 +114,9 @@ io.on('connection', function (socket) {
         console.log('Game is starting!');
         db.blackCard(function (err, blackCard) {
             if (err) return console.log(err);
-            audioFile = fs.createWriteStream(__dirname + '/game/currentq.mp3');
-            ttv = blackCard.text.replace(/_/g, 'blank');
-            stream = ivona.createVoice(ttv, appVoice).pipe(audioFile);
+            var audioFile = fs.createWriteStream(__dirname + '/game/currentq.mp3');
+            var ttv = blackCard.text.replace(/_/g, 'blank');
+            var stream = ivona.createVoice(ttv, appVoice).pipe(audioFile);
             stream.on('finish', function() {
                 socket.emit('audio finished');
             });
@@ -173,7 +173,7 @@ io.on('connection', function (socket) {
     socket.on('user kicked', function () {
         if (addedUser) {
             addedUser = false;
-            index = players.indexOf(socket.username);
+            var index = players.indexOf(socket.username);
             if (index > -1) players.splice(index, 1);
         }
     });
@@ -181,7 +181,7 @@ io.on('connection', function (socket) {
     // The client or game host has disconnected
     socket.on('disconnect', function () {
         if (addedUser) {
-            index = players.indexOf(socket.username);
+            var index = players.indexOf(socket.username);
             if (index > -1) players.splice(index, 1);
             console.log(socket.username + ' left room');
             socket.broadcast.emit('user left', {
