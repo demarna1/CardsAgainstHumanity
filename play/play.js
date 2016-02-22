@@ -15,6 +15,7 @@ $(function() {
     var $cardList = $('.cardList');
     var $voteList = $('.voteList');
 
+    // State variables
     var socket = io();
     var username = '';
     var cardsToAnswer = 0;
@@ -40,7 +41,7 @@ $(function() {
                 done: done
             });
             if (done) {
-                $welcomeLabel.text('Response submitted');
+                $welcomeLabel.text('Response submitted!');
                 $waitingLabel.text('Waiting for other players...');
                 transitionTo($waitPage);
             }
@@ -48,7 +49,6 @@ $(function() {
     }
 
     $playButton.click(function() {
-        console.log('Play clicked');
         var roomCode = $roomCodeInput.val().trim();
         username = $usernameInput.val().trim();
         if (roomCode.length == 4 && username) {
@@ -64,6 +64,10 @@ $(function() {
         $welcomeLabel.text('Welcome, ' + username + '!');
         $waitingLabel.text('Waiting to start a new round...');
         transitionTo($waitPage);
+    });
+
+    socket.on('login error', function (data) {
+        alert('Error joining: ' + data.error);
     });
 
     socket.on('new round', function (data) {
@@ -87,23 +91,21 @@ $(function() {
     });
 
     socket.on('round over', function (data) {
-        transitionTo($votePage);
         $voteList.empty();
         for (var user in data.submissions) {
             if (user == username) continue;
-            var cards = data.submissions[user].cards;
-            var voteText = cards[0];
-            for (var i = 1; i < cards.length; i++) {
-                voteText += ' / ' + cards[i];
-            }
-            $voteList.append('<li class="whiteCard"><button class="cardButton">' + voteText + '</button></li>');
+            $voteList.append('<li class="whiteCard"><button class="cardButton">' + data.submissions[user] + '</button></li>');
         }
         cardsToAnswer = 1;
         registerClicks('vote card');
+        transitionTo($votePage);
     });
 
-    socket.on('login error', function (data) {
-        alert('Error joining: ' + data.error);
+    socket.on('voting over', function () {
+        cardsToAnswer = 0;
+        $welcomeLabel.text('The votes are in!');
+        $waitingLabel.text('Waiting to start a new round...');
+        transitionTo($waitPage);
     });
 
     socket.on('host left', function (data) {

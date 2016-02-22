@@ -16,7 +16,7 @@ ul {
   width: 100%;
 }
 
-.lobby.page, .question.page, .vote.page {
+.lobby.page, .question.page, .vote.page, .result.page {
   display: none;
   text-align: center;
   margin: auto;

@@ -169,6 +169,12 @@ io.on('connection', function (socket) {
         });
     });
 
+    // The voting is over
+    socket.on('voting over', function () {
+        console.log('voting over, all users voted');
+        socket.broadcast.emit('voting over');
+    });
+
     // The client was kicked from the room
     socket.on('user kicked', function () {
         if (addedUser) {

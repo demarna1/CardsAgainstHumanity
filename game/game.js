@@ -4,6 +4,7 @@ $(function() {
     var $lobbyPage = $('.lobby.page');
     var $questionPage = $('.question.page');
     var $votePage = $('.vote.page');
+    var $resultPage = $('.result.page');
     var $currentPage = $newPage;
 
     // Other jQuery elements
@@ -19,12 +20,11 @@ $(function() {
     var $submittedList = $('.submittedList');
     var $voteTimer = $('.voteTimer');
     var $votedList = $('.votedList');
+    var $resultList = $('.resultList');
 
+    // State variables
     var socket = io();
-    var round = 0;
-    var players = [];
-    var submissions = {};
-    var votes = [];
+    var state = null;
 
     function transitionTo($nextPage) {
         if ($currentPage == $nextPage) return;
@@ -35,14 +35,14 @@ $(function() {
 
     function updateLobby() {
         $lobbyList.empty();
-        for (var i = 0; i < players.length; i++) {
-            $lobbyList.append('<li class="lobbyPlayer">' + players[i] + '</li>');
+        for (var i = 0; i < state.players.length; i++) {
+            $lobbyList.append('<li class="lobbyPlayer">' + state.players[i] + '</li>');
         }
-        if (players.length >= 2) {
+        if (state.players.length >= 2) {
             $readyLabel.text('All players ready?');
             $startButton.removeAttr('disabled');
         } else {
-            $readyLabel.text('Need ' + (2 - players.length) + ' more player(s).');
+            $readyLabel.text('Need ' + (2 - state.players.length) + ' more player(s).');
             $startButton.attr('disabled', 'disabled');
         }
     }
@@ -62,28 +62,32 @@ $(function() {
     }
 
     function endRound() {
+        console.log('answering has ended');
+        var submittedMap = state.getSubmittedMap();
         socket.emit('round over', {
-            submissions: submissions
+            submissions: submittedMap
         });
-        $votedList.empty();
         $submittedList.empty();
-        transitionTo($votePage);
-        startTimer($voteTimer, 20, $votePage, endVoting);
-        for (var user in submissions) {
-            var cards = submissions[user].cards;
-            var submissionText = cards[0];
-            for (var i = 1; i < cards.length; i++) {
-                submissionText += ' / ' + cards[i];
-            }
-            $submittedList.append('<li class="whiteCard"><button class="cardSpan">' + submissionText + '</button></li>');
+        $votedList.empty();
+        for (var user in submittedMap) {
+            $submittedList.append('<li class="whiteCard"><button class="cardSpan">' + submittedMap[user] + '</button></li>');
         }
+        transitionTo($votePage);
+        startTimer($voteTimer, 25, $votePage, endVoting);
     }
 
     function endVoting() {
         console.log('voting has ended');
-        votes = [];
-        submissions = {};
-        socket.emit('start game');
+        socket.emit('voting over');
+        $resultList.empty();
+        /*for (i = 0; i < votes.length; i++) {
+            console.log('appending result');
+            $resultList.append('<li class="whiteCard"><button class="cardSpan">' + votes[i] + '</button></li>');
+        }*/
+        transitionTo($resultPage);
+        /*setTimeout(function() {
+            socket.emit('start game');
+        }, 10000);*/
     }
 
     $newButton.click(function() {
@@ -95,7 +99,9 @@ $(function() {
     });
 
     socket.on('code created', function (data) {
-        $gameCode.text(data.gameCode);
+        state = new State(data.gameCode);
+        $gameCode.text(state.gameCode);
+        $lobbyList.empty();
         transitionTo($lobbyPage);
     });
 
@@ -104,29 +110,29 @@ $(function() {
     });
 
     socket.on('user joined', function (data) {
-        players = data.players;
-        console.log('user joined, numPlayers = ' + players.length);
+        state.players = data.players;
+        console.log('user joined, numPlayers = ' + state.players.length);
         updateLobby();
     });
 
     socket.on('user left', function (data) {
-        players = data.players;
-        console.log('user left, numPlayers = ' + players.length);
+        state.players = data.players;
+        console.log('user left, numPlayers = ' + state.players.length);
         updateLobby();
-        if (players.length < 2) {
-            round = 0;
-            submissions = {};
+        if (state.players.length < 2) {
+            state.restart();
             transitionTo($lobbyPage);
         }
     });
 
     socket.on('black card', function (data) {
         console.log('Q: ' + data.text);
-        ++round;
-        $questionRound.text('Round ' + round);
+        state.newRound();
+        $questionRound.text('Round ' + state.round);
         $questionLabel.text(data.text);
+        $answeredList.empty();
         transitionTo($questionPage);
-        startTimer($roundTimer, 15 + 10*data.pick, $questionPage, endRound);
+        startTimer($roundTimer, 20 + 10*data.pick, $questionPage, endRound);
     });
 
     socket.on('audio finished', function () {
@@ -136,41 +142,26 @@ $(function() {
 
     socket.on('user answered', function (data) {
         console.log(data.username + ' answered');
-        if (data.username in submissions) {
-            submissions[data.username].cards.push(data.cardText);
-        } else {
-            submissions[data.username] = {
-                done: false,
-                cards: [data.cardText]
-            };
-        }
+        state.addUserAnswer(data.username, data.cardText, data.done);
         if (data.done) {
             console.log(data.username + ' is done');
-            submissions[data.username].done = true;
             $answeredList.append('<li class="answeredPlayer">' +
                 data.username + '</li>');
         }
-        var transition = true;
-        var count = 0;
-        for (var user in submissions) {
-            transition &= submissions[user].done;
-            count++;
-        }
-        if (transition && count >= players.length) {
+        if (state.isRoundOver()) {
             endRound();
         }
     });
 
     socket.on('user voted', function (data) {
         console.log(data.username + ' voted');
-        // TODO: add support for more than one vote
+        state.addUserVote(data.username, data.cardText, data.done);
         if (data.done) {
             $votedList.append('<li class="answeredPlayer">' +
                 data.username + '</li>');
-            votes.push(data.cardText);
-            if (votes.length >= players.length) {
-                endVoting();
-            }
+        }
+        if (state.isVotingOver()) {
+            endVoting();
         }
     });
 });
