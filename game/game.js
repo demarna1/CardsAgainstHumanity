@@ -8,6 +8,7 @@ $(function() {
     var $currentPage = $newPage;
 
     // Other jQuery elements
+    var $header = $('.header');
     var $newButton = $('.newButton .button');
     var $gameCode = $('.code');
     var $lobbyList = $('.lobbyList');
@@ -102,6 +103,7 @@ $(function() {
         state = new State(data.gameCode);
         $gameCode.text(state.gameCode);
         $lobbyList.empty();
+        $header.delay(400).fadeIn();
         transitionTo($lobbyPage);
     });
 

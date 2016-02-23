@@ -6,6 +6,14 @@
   <link rel="stylesheet" href="game.css">
 </head>
 <body>
+  <div class="header">
+    <div class="headerLeft"><a class="home" href="/">Home</a></div>
+    <div class="headerRight">
+      <img class="unlock" src="/unlock.png" width="25px" height="25px"/>
+      <label class="code">?</label>
+    </div>
+    <div class="headerCenter">Cards Against Humanity</div>
+  </div>
   <ul class="pages">
     <li class="new page">
       <h3 class="title">Cards Against Humanity</h3>
@@ -14,11 +22,7 @@
       </div>
     </li>
     <li class="lobby page">
-      <h3 class="title">Cards Against Humanity</h3>
-      <div class="gameCode">
-        <label class="label">Game Code:</label>
-        <label class="code"/>
-      </div>
+      <h3 class="title">Lobby</h3>
       <ul class="lobbyList">
       </ul>
       <div class="readyLabel">
@@ -27,6 +31,10 @@
       <div class="startButton">
         <input class="button" type="button" disabled="disabled" value="Start"/>
       </div>
+      <ol class="gameCode">
+        <li><label class="label">Go to www.cah-node.herokuapp.com/play</label></li>
+        <li><label class="label">and enter code <span class="bodyCode code">?</span> to join!</label></li>
+      </ol>
     </li>
     <li class="question page">
       <h3 class="title">Round 0</h3>
