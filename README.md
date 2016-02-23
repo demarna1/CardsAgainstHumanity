@@ -30,7 +30,7 @@ The server will be started at `http://localhost:3000`.
 
 ```
 $ heroku login
-$ git push heroku master
+$ ./push_to_heroku.sh
 $ heroku open
 ```
 
