@@ -81,10 +81,17 @@ $(function() {
         console.log('voting has ended');
         socket.emit('voting over');
         $resultList.empty();
-        /*for (i = 0; i < votes.length; i++) {
-            console.log('appending result');
-            $resultList.append('<li class="whiteCard"><button class="cardSpan">' + votes[i] + '</button></li>');
-        }*/
+        console.log('results:');
+        for (var i = 0; i < state.results.length; i++) {
+            voters = state.results[i].voters;
+            console.log('  user = ' + state.results[i].user + ', cards = ' +
+                state.results[i].cards + ', numVotes = ' + voters.length);
+            console.log('  voters:');
+            for (var j = 0; j < voters.length; j++) {
+                console.log('    ' + voters[j]);
+            }
+            //$resultList.append('<li class="whiteCard"><button class="cardSpan">' + votes[i] + '</button></li>');
+        }
         transitionTo($resultPage);
         /*setTimeout(function() {
             socket.emit('start game');
