@@ -56,30 +56,24 @@ State.prototype.isRoundOver = function() {
         allDone &= this.submissions[user].done;
         count++;
     }
-    if (allDone && count >= this.players.length) {
-        // Round is over
-        for (var user in this.submissions) {
-            this.results.push({
-                user: user,
-                cards: this.submissions[user].cards,
-                voters: []
-            });
-        }
-        return true;
-    }
-    return false;
+    return allDone && count >= this.players.length;
 };
 
 /*
- * Returns a map of users and their submissions for those who finished
- * before timing out; e.g. submittedMap["name"] = "My Answer".
+ * Initialize the results list at the start of voting. Return the
+ * submitted map of those users who finished before timing out.
  */
-State.prototype.getSubmittedMap = function() {
+State.prototype.startVoting = function() {
     var submittedMap = {};
     for (var user in this.submissions) {
         var submission = this.submissions[user];
         if (submission.done) {
             submittedMap[user] = submission.cards;
+            this.results.push({
+                user: user,
+                cards: submission.cards,
+                voters: []
+            });
         }
     }
     return submittedMap;

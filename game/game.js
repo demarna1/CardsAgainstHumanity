@@ -21,7 +21,7 @@ $(function() {
     var $submittedList = $('.submittedList');
     var $voteTimer = $('.voteTimer');
     var $votedList = $('.votedList');
-    var $resultList = $('.resultList');
+    var $resultBody = $('.resultBody');
 
     // State variables
     var socket = io();
@@ -63,39 +63,45 @@ $(function() {
     }
 
     function endRound() {
-        console.log('answering has ended');
-        var submittedMap = state.getSubmittedMap();
+        console.log('round over; start voting');
+        var submittedMap = state.startVoting();
         socket.emit('round over', {
             submissions: submittedMap
         });
         $submittedList.empty();
         $votedList.empty();
         for (var user in submittedMap) {
-            $submittedList.append('<li class="whiteCard"><button class="cardSpan">' + submittedMap[user] + '</button></li>');
+            $submittedList.append('<li class="whiteCard"><button class="cardButton">' + submittedMap[user] + '</button></li>');
         }
         transitionTo($votePage);
         startTimer($voteTimer, 25, $votePage, endVoting);
     }
 
+    function addResultRow(i, results) {
+        $resultBody.append('<tr id="tr' + i + '" style="visibility:hidden;">' +
+            '<td class="label">' + results[i].user + '</td>' +
+            '<td><button class="cardButton">' + results[i].cards + '</button></td>' +
+            '<td class="label">' + results[i].voters.length + '</td>' +
+        '</tr>');
+        timeout = (results.length - i) * 2000;
+        setTimeout(function() {
+            $('#tr' + i).css('visibility', 'visible').hide().fadeIn();
+        }, timeout);
+    }
+
     function endVoting() {
-        console.log('voting has ended');
         socket.emit('voting over');
-        $resultList.empty();
-        console.log('results:');
+        $resultBody.empty();
+        state.results.sort(function(a, b) {
+            return b.voters.length - a.voters.length;
+        });
         for (var i = 0; i < state.results.length; i++) {
-            voters = state.results[i].voters;
-            console.log('  user = ' + state.results[i].user + ', cards = ' +
-                state.results[i].cards + ', numVotes = ' + voters.length);
-            console.log('  voters:');
-            for (var j = 0; j < voters.length; j++) {
-                console.log('    ' + voters[j]);
-            }
-            //$resultList.append('<li class="whiteCard"><button class="cardSpan">' + votes[i] + '</button></li>');
+            addResultRow(i, state.results);
         }
         transitionTo($resultPage);
-        /*setTimeout(function() {
+        setTimeout(function() {
             socket.emit('start game');
-        }, 10000);*/
+        }, 15000);
     }
 
     $newButton.click(function() {

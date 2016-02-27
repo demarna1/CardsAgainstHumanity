@@ -88,10 +88,23 @@ ul {
   margin: 10px;
 }
 
-.cardSpan {
+.cardButton {
   color: #000;
   background: #fff;
   padding: 10px 20px 10px 20px;
   margin: 3px;
+}
+
+.columnHeader {
+  color: #fff;
+  font-weight: 600;
+}
+
+td {
+  text-align: center;
+}
+
+.resultTable {
+  margin: 15px auto 0 auto;
 }
 
