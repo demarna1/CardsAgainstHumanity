@@ -48,17 +48,26 @@ $(function() {
         }
     }
 
-    function startTimer(timer, duration, $triggerPage, triggerCallback) {
+    function startTimer($timer, duration, $triggerPage, triggerCallback) {
+        if (typeof startTimer.currentId == 'undefined') {
+            startTimer.currentId = 0;
+        }
+        if (startTimer.currentId > 0) {
+            clearInterval(startTimer.currentId);
+            startTimer.currentId = 0;
+        }
         var timeLeft = duration;
-        var timerIntervalId = setInterval(function() {
-            timer.text(timeLeft);
+        $timer.text(timeLeft);
+        startTimer.currentId = setInterval(function() {
             if (--timeLeft < 0) {
-                console.log('clearing timer interval');
-                clearInterval(timerIntervalId);
+                clearInterval(startTimer.currentId);
+                startTimer.currentId = 0;
                 if ($currentPage == $triggerPage) {
                     triggerCallback();
                 }
+                return;
             }
+            $timer.text(timeLeft);
         }, 1000);
     }
 
@@ -156,7 +165,6 @@ $(function() {
     });
 
     socket.on('user answered', function (data) {
-        console.log(data.username + ' answered');
         state.addUserAnswer(data.username, data.cardText, data.done);
         if (data.done) {
             console.log(data.username + ' is done');
@@ -169,7 +177,6 @@ $(function() {
     });
 
     socket.on('user voted', function (data) {
-        console.log(data.username + ' voted');
         state.addUserVote(data.username, data.cardText, data.done);
         if (data.done) {
             $votedList.append('<li class="answeredPlayer">' +
