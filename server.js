@@ -49,11 +49,6 @@ lineReader.on('line', function (line) {
     }
     ++lineNo;
 });
-var appVoice = { body: { voice: {
-    name: 'Brian',
-    language: 'en-GB',
-    gender: 'Male'
-}}};
 
 io.on('connection', function (socket) {
     var addedUser = false;
@@ -116,6 +111,11 @@ io.on('connection', function (socket) {
             if (err) return console.log(err);
             var audioFile = fs.createWriteStream(__dirname + '/game/currentq.mp3');
             var ttv = blackCard.text.replace(/_/g, 'blank');
+            var appVoice = { body: { voice: {
+                name: 'Brian',
+                language: 'en-GB',
+                gender: 'Male'
+            }}};
             var stream = ivona.createVoice(ttv, appVoice).pipe(audioFile);
             stream.on('finish', function() {
                 socket.emit('audio finished');

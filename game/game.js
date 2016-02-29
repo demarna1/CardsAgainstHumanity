@@ -86,13 +86,14 @@ $(function() {
         startTimer($voteTimer, 25, $votePage, endVoting);
     }
 
-    function addResultRow(i, results) {
+    function addResultRow(i) {
+        r = state.results[i];
         $resultBody.append('<tr id="tr' + i + '" style="visibility:hidden;">' +
-            '<td class="label">' + results[i].user + '</td>' +
-            '<td><button class="cardButton">' + results[i].cards + '</button></td>' +
-            '<td class="label">' + results[i].voters.length + '</td>' +
+            '<td class="label">' + r.user + '</td>' +
+            '<td><button class="cardButton">' + r.cards + '</button></td>' +
+            '<td class="label">' + r.voters.length + '</td>' +
         '</tr>');
-        timeout = (results.length - i) * 2000;
+        timeout = (state.results.length - i) * 2000;
         setTimeout(function() {
             $('#tr' + i).css('visibility', 'visible').hide().fadeIn();
         }, timeout);
@@ -105,12 +106,17 @@ $(function() {
             return b.voters.length - a.voters.length;
         });
         for (var i = 0; i < state.results.length; i++) {
-            addResultRow(i, state.results);
+            addResultRow(i);
         }
         transitionTo($resultPage);
+        var timeout = (state.results.length * 2000) + 6000;
         setTimeout(function() {
-            socket.emit('start game');
-        }, 15000);
+            endResults();
+        }, timeout);
+    }
+
+    function endResults() {
+        socket.emit('start game');
     }
 
     $newButton.click(function() {
