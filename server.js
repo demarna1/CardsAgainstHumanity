@@ -20,8 +20,8 @@ app.get('/play', function(req, res) {
 app.get('/game', function(req, res) {
     res.sendFile(__dirname + '/game/game.html');
 });
-app.get('/game/currentq.mp3', function(req, res) {
-    res.sendFile(__dirname + '/game/currentq.mp3');
+app.get('/game/audio/q.mp3', function(req, res) {
+    res.sendFile(__dirname + '/game/audio/q.mp3');
 });
 
 server.listen(port, function() {
@@ -109,7 +109,7 @@ io.on('connection', function (socket) {
         console.log('Game is starting!');
         db.blackCard(function (err, blackCard) {
             if (err) return console.log(err);
-            var audioFile = fs.createWriteStream(__dirname + '/game/currentq.mp3');
+            var audioFile = fs.createWriteStream(__dirname + '/game/audio/q.mp3');
             var ttv = blackCard.text.replace(/_/g, 'blank');
             var appVoice = { body: { voice: {
                 name: 'Brian',

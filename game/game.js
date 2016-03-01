@@ -166,7 +166,9 @@ $(function() {
     });
 
     socket.on('audio finished', function () {
-        var audio = new Audio('/game/currentq.mp3');
+        // Add time parameter to prevent browser caching
+        var url = '/game/audio/q.mp3?cb=' + new Date().getTime();
+        var audio = new Audio(url);
         audio.play();
     });
 
