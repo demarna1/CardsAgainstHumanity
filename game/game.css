@@ -53,7 +53,7 @@ ul {
   width: 100%;
 }
 
-.lobby.page, .question.page, .vote.page, .result.page {
+.lobby.page, .question.page, .vote.page, .result.page, .score.page {
   display: none;
   text-align: center;
   margin: auto;
@@ -104,7 +104,7 @@ td {
   text-align: center;
 }
 
-.resultTable {
+.resultTable, .scoreTable {
   margin: 15px auto 0 auto;
 }
 

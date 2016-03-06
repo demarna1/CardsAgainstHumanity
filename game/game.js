@@ -5,6 +5,7 @@ $(function() {
     var $questionPage = $('.question.page');
     var $votePage = $('.vote.page');
     var $resultPage = $('.result.page');
+    var $scorePage = $('.score.page');
     var $currentPage = $newPage;
 
     // Other jQuery elements
@@ -22,6 +23,7 @@ $(function() {
     var $voteTimer = $('.voteTimer');
     var $votedList = $('.votedList');
     var $resultBody = $('.resultBody');
+    var $scoreBody = $('.scoreBody');
 
     // State variables
     var socket = io();
@@ -116,7 +118,11 @@ $(function() {
     }
 
     function endResults() {
-        socket.emit('start game');
+        $scoreBody.empty();
+        transitionTo($scorePage);
+        setTimeout(function() {
+            socket.emit('start game');
+        }, 10000);
     }
 
     $newButton.click(function() {
