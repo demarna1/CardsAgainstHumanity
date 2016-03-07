@@ -29,7 +29,6 @@ server.listen(port, function() {
 });
 
 var gameCode = '';
-var players = [];
 var lineReader = require('readline').createInterface({
     input: fs.createReadStream(__dirname + '/cred/ivona_cred.txt')
 });
@@ -82,26 +81,38 @@ io.on('connection', function (socket) {
 
     // The client is logging into a room
     socket.on('login', function (data) {
+        // Check the room code
         var roomCode = data.roomCode.toUpperCase();
         if (roomCode !== gameCode) {
             socket.emit('login error', {
-                error: 'invalid room code ' + data.roomCode
-            });
-            return;
-        } else if (players.indexOf(data.username) > -1) {
-            socket.emit('login error', {
-                error: 'name ' + data.username + ' already taken'
+                error: 'invalid room code ' + roomCode
             });
             return;
         }
-        socket.username = data.username;
-        addedUser = true;
-        players.push(data.username);
-        console.log(data.username + ' joined room ' + roomCode);
-        socket.emit('login success');
-        socket.broadcast.emit('user joined', {
-            players: players
+
+        io.in(roomCode).clients(function(error, clients) {
+            if (error) throw error;
+            // Check that name is not already taken in this room
+            for (var i = 0; i < clients.length; i++) {
+                var client = io.sockets.connected[clients[i]];
+                if (data.username === client.username) {
+                    socket.emit('login error', {
+                        error: 'name ' + data.username + ' already taken'
+                    });
+                    return;
+                }
+            }
+            // Name is unique; add to gameroom
+            socket.join(roomCode);
+            socket.username = data.username;
+            addedUser = true;
+            console.log(data.username + ' joined room ' + roomCode);
+            socket.emit('login success');
+            socket.broadcast.emit('user joined', {
+                username: data.username
+            });
         });
+
     });
 
     // The host has started the game
@@ -175,23 +186,12 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('voting over');
     });
 
-    // The client was kicked from the room
-    socket.on('user kicked', function () {
-        if (addedUser) {
-            addedUser = false;
-            var index = players.indexOf(socket.username);
-            if (index > -1) players.splice(index, 1);
-        }
-    });
-
     // The client or game host has disconnected
     socket.on('disconnect', function () {
         if (addedUser) {
-            var index = players.indexOf(socket.username);
-            if (index > -1) players.splice(index, 1);
             console.log(socket.username + ' left room');
             socket.broadcast.emit('user left', {
-                players: players
+                username: socket.username
             });
         }
         if (addedGame) {

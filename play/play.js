@@ -112,7 +112,6 @@ $(function() {
         $roomCodeInput.val('');
         cardsToAnswer = 0;
         transitionTo($loginPage);
-        socket.emit('user kicked');
         alert('Host from room ' + data.gameCode + ' has disconnected');
     });
 });

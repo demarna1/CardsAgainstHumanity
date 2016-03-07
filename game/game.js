@@ -113,7 +113,9 @@ $(function() {
         transitionTo($resultPage);
         var timeout = (state.results.length * 2000) + 6000;
         setTimeout(function() {
-            endResults();
+            if ($currentPage == $resultPage) {
+                endResults();
+            }
         }, timeout);
     }
 
@@ -121,7 +123,9 @@ $(function() {
         $scoreBody.empty();
         transitionTo($scorePage);
         setTimeout(function() {
-            socket.emit('start game');
+            if ($currentPage == $scorePage) {
+                socket.emit('start game');
+            }
         }, 10000);
     }
 
@@ -146,18 +150,21 @@ $(function() {
     });
 
     socket.on('user joined', function (data) {
-        state.players = data.players;
+        state.players.push(data.username);
         console.log('user joined, numPlayers = ' + state.players.length);
         updateLobby();
     });
 
     socket.on('user left', function (data) {
-        state.players = data.players;
-        console.log('user left, numPlayers = ' + state.players.length);
-        updateLobby();
-        if (state.players.length < 2) {
-            state.restart();
-            transitionTo($lobbyPage);
+        var index = state.players.indexOf(data.username);
+        if (index > -1) {
+            state.players.splice(index, 1);
+            console.log('user left, numPlayers = ' + state.players.length);
+            updateLobby();
+            if (state.players.length < 2) {
+                state.restart();
+                transitionTo($lobbyPage);
+            }
         }
     });
 
