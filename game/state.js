@@ -18,6 +18,9 @@ State.prototype.restart = function() {
     this.submissions = {};
     this.voted = {};
     this.results = [];
+    for (var i = 0; i < this.players.length; i++) {
+        this.players[i].score = 0;
+    }
 };
 
 /*
@@ -28,6 +31,31 @@ State.prototype.newRound = function() {
     this.submissions = {};
     this.voted = {};
     this.results = [];
+};
+
+/*
+ * Add a new player.
+ */
+State.prototype.addUser = function(username) {
+    this.players.push({
+        username: username,
+        score: 0
+    });
+};
+
+/*
+ * Remove a player.
+ */
+State.prototype.removeUser = function(username) {
+    var indexToRemove = -1;
+    for (var i = 0; i < this.players.length; i++) {
+        if (this.players[i].username === username) {
+            indexToRemove = i;
+        }
+    }
+    if (indexToRemove > -1) {
+        this.players.splice(indexToRemove, 1);
+    }
 };
 
 /*
@@ -86,10 +114,17 @@ State.prototype.startVoting = function() {
  */
 State.prototype.addUserVote = function(user, cardText, done) {
     this.voted[user] = done;
+    var userWithVote = null;
     for (var i = 0; i < this.results.length; i++) {
         if (this.results[i].cards === cardText) {
-            console.log(user + ' voted for ' + this.results[i].user);
+            userWithVote = this.results[i].user;
+            console.log(user + ' voted for ' + userWithVote);
             this.results[i].voters.push(user);
+        }
+    }
+    for (var i = 0; i < this.players.length; i++) {
+        if (userWithVote === this.players[i].username) {
+            this.players.score++;
         }
     }
 };

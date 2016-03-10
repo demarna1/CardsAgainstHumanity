@@ -39,7 +39,7 @@ $(function() {
     function updateLobby() {
         $lobbyList.empty();
         for (var i = 0; i < state.players.length; i++) {
-            $lobbyList.append('<li class="lobbyPlayer">' + state.players[i] + '</li>');
+            $lobbyList.append('<li class="lobbyPlayer">' + state.players[i].username + '</li>');
         }
         if (state.players.length >= 2) {
             $readyLabel.text('All players ready?');
@@ -90,14 +90,14 @@ $(function() {
 
     function addResultRow(i) {
         r = state.results[i];
-        $resultBody.append('<tr id="tr' + i + '" style="visibility:hidden;">' +
+        $resultBody.append('<tr id="result' + i + '" style="visibility:hidden;">' +
             '<td class="label">' + r.user + '</td>' +
             '<td><button class="cardButton">' + r.cards + '</button></td>' +
             '<td class="label">' + r.voters.length + '</td>' +
         '</tr>');
         timeout = (state.results.length - i) * 2000;
         setTimeout(function() {
-            $('#tr' + i).css('visibility', 'visible').hide().fadeIn();
+            $('#result' + i).css('visibility', 'visible').hide().fadeIn();
         }, timeout);
     }
 
@@ -119,14 +119,35 @@ $(function() {
         }, timeout);
     }
 
+    function addScoreRow(i) {
+        r = state.players[i];
+        $scoreBody.append('<tr id="score' + i + '" style="visibility:hidden;">' +
+            '<td class="label">' + r.username + '</td>' +
+            '<td class="label">' + r.score + '</td>' +
+        '</tr>');
+        timeout = (state.players.length - i) * 2000;
+        console.log('setting visibility timeout of ' + timeout);
+        setTimeout(function() {
+            console.log('setting visible');
+            $('#score' + i).css('visibility', 'visible').hide().fadeIn();
+        }, timeout);
+    }
+
     function endResults() {
         $scoreBody.empty();
+        state.players.sort(function(a, b) {
+            return b.score - a.score;
+        });
+        for (var i = 0; i < state.players.length; i++) {
+            addScoreRow(i);
+        }
         transitionTo($scorePage);
+        var timeout = (state.players.length * 2000) + 6000;
         setTimeout(function() {
             if ($currentPage == $scorePage) {
                 socket.emit('start game');
             }
-        }, 10000);
+        }, timeout);
     }
 
     $newButton.click(function() {
@@ -150,21 +171,18 @@ $(function() {
     });
 
     socket.on('user joined', function (data) {
-        state.players.push(data.username);
+        state.addUser(data.username);
         console.log('user joined, numPlayers = ' + state.players.length);
         updateLobby();
     });
 
     socket.on('user left', function (data) {
-        var index = state.players.indexOf(data.username);
-        if (index > -1) {
-            state.players.splice(index, 1);
-            console.log('user left, numPlayers = ' + state.players.length);
-            updateLobby();
-            if (state.players.length < 2) {
-                state.restart();
-                transitionTo($lobbyPage);
-            }
+        state.removeUser(data.username);
+        console.log('user left, numPlayers = ' + state.players.length);
+        updateLobby();
+        if (state.players.length < 2) {
+            state.restart();
+            transitionTo($lobbyPage);
         }
     });
 
