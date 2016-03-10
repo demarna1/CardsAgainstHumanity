@@ -95,16 +95,23 @@ ul {
   margin: 3px;
 }
 
-.columnHeader {
-  color: #fff;
-  font-weight: 600;
-}
-
 td {
   text-align: center;
 }
 
 .resultTable, .scoreTable {
   margin: 15px auto 0 auto;
+}
+
+.colHeadTr {
+  color: #fff;
+}
+
+tbody td {
+  font-size: 150%;
+}
+
+.scoreTable tbody td {
+  padding: 7px;
 }
 

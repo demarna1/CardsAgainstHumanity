@@ -124,7 +124,7 @@ State.prototype.addUserVote = function(user, cardText, done) {
     }
     for (var i = 0; i < this.players.length; i++) {
         if (userWithVote === this.players[i].username) {
-            this.players.score++;
+            this.players[i].score++;
         }
     }
 };
