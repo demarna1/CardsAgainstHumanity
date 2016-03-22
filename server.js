@@ -5,24 +5,13 @@ var io = require('socket.io')(server);
 var ivonaNode = require('ivona-node');
 var fs = require('fs');
 var db = require('./db/db.js');
+var routes = require('./main/routes');
 var port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname + '/main'));
 app.use(express.static(__dirname + '/play'));
 app.use(express.static(__dirname + '/game'));
-
-app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/main/index.html');
-});
-app.get('/play', function(req, res) {
-    res.sendFile(__dirname + '/play/play.html');
-});
-app.get('/game', function(req, res) {
-    res.sendFile(__dirname + '/game/game.html');
-});
-app.get('/game/audio/q.mp3', function(req, res) {
-    res.sendFile(__dirname + '/game/audio/q.mp3');
-});
+routes(app);
 
 server.listen(port, function() {
     console.log('Server listening on port %d', port);
