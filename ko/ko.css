@@ -53,17 +53,17 @@ ul {
   width: 100%;
 }
 
-.tradLogo {
+.koLogo {
   margin: 20px;
 }
 
-.lobby.page, .question.page, .vote.page, .result.page, .score.page {
+.lobby.page/*, .question.page, .vote.page, .result.page, .score.page*/ {
   display: none;
   text-align: center;
   margin: auto;
 }
 
-.label, .lobbyPlayer, .answeredPlayer {
+.label, .lobbyPlayer/*, .answeredPlayer*/ {
   color: #fff;
   font-weight: 100;
 }
@@ -76,11 +76,11 @@ ul {
   color: #fff;
 }
 
-.lobbyList, .answeredList, .submittedList, .votedList {
+.lobbyList/*, .answeredList, .submittedList, .votedList*/ {
   margin: 15px;
 }
 
-.lobbyPlayer, .answeredPlayer, .questionLabel .label {
+.lobbyPlayer/*, .answeredPlayer, .questionLabel .label*/ {
   font-size: 150%;
 }
 
@@ -88,6 +88,7 @@ ul {
   margin: 10px;
 }
 
+/*
 .questionLabel {
   margin-top: 15px;
 }
@@ -118,4 +119,5 @@ tbody td {
 .scoreTable tbody td {
   padding: 7px;
 }
+*/
 

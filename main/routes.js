@@ -19,4 +19,8 @@ module.exports = function(app) {
     app.get('/game/audio/q.mp3', function(req, res) {
         res.sendFile(path.resolve('game/audio/q.mp3'));
     });
+
+    app.get('/ko', function(req, res) {
+        res.sendFile(path.resolve('ko/ko.html'));
+    });
 }

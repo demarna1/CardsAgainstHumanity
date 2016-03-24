@@ -11,6 +11,7 @@ var port = process.env.PORT || 3000;
 app.use(express.static(__dirname + '/main'));
 app.use(express.static(__dirname + '/play'));
 app.use(express.static(__dirname + '/game'));
+app.use(express.static(__dirname + '/ko'));
 routes(app);
 
 server.listen(port, function() {
