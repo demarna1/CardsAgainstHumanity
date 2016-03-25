@@ -31,9 +31,7 @@ $(function() {
 
     // State variables
     var socket = io();
-    /*
     var state = null;
-    */
 
     function transitionTo($nextPage) {
         if ($currentPage == $nextPage) return;
@@ -42,7 +40,6 @@ $(function() {
         $currentPage = $nextPage;
     }
 
-    /*
     function updateLobby() {
         $lobbyList.empty();
         for (var i = 0; i < state.players.length; i++) {
@@ -57,6 +54,7 @@ $(function() {
         }
     }
 
+    /*
     function startTimer($timer, duration, $triggerPage, triggerCallback) {
         if (typeof startTimer.currentId == 'undefined') {
             startTimer.currentId = 0;
@@ -169,7 +167,7 @@ $(function() {
     */
 
     socket.on('code created', function (data) {
-        //state = new State(data.gameCode);
+        state = new State(data.gameCode);
         $gameCode.text(data.gameCode);
         $lobbyList.empty();
         $header.delay(400).fadeIn();
@@ -180,7 +178,6 @@ $(function() {
         alert('Host instance already exists: ' + data.gameCode);
     });
 
-    /*
     socket.on('user joined', function (data) {
         state.addUser(data.username);
         console.log('user joined, numPlayers = ' + state.players.length);
@@ -197,6 +194,7 @@ $(function() {
         }
     });
 
+    /*
     socket.on('black card', function (data) {
         console.log('Q: ' + data.text);
         state.newRound();
