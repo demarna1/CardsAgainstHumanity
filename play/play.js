@@ -20,6 +20,18 @@ $(function() {
     var username = '';
     var cardsToAnswer = 0;
 
+    function shuffle(array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+        while (0 !== currentIndex) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+        return array;
+    }
+
     function transitionTo($nextPage) {
         $currentPage.fadeOut();
         $nextPage.delay(400).fadeIn();
@@ -92,9 +104,14 @@ $(function() {
 
     socket.on('round over', function (data) {
         $voteList.empty();
+        var cardsForVoting = [];
         for (var user in data.submissions) {
             if (user == username) continue;
-            $voteList.append('<li class="whiteCard"><button class="cardButton">' + data.submissions[user] + '</button></li>');
+            cardsForVoting.push(data.submissions[user]);
+        }
+        shuffle(cardsForVoting);
+        for (var i = 0; i < cardsForVoting.length; i++) {
+            $voteList.append('<li class="whiteCard"><button class="cardButton">' + cardsForVoting[i] + '</button></li>');
         }
         cardsToAnswer = 1;
         registerClicks('vote card');
@@ -105,6 +122,14 @@ $(function() {
         cardsToAnswer = 0;
         $welcomeLabel.text('The votes are in!');
         $waitingLabel.text('Waiting to start a new round...');
+        transitionTo($waitPage);
+    });
+
+    socket.on('game over', function (data) {
+        cardsToAnswer = 0;
+        $cardList.empty();
+        $welcomeLabel.text(data.winner + ' is the winner');
+        $waitingLabel.text('Waiting to start a new game...');
         transitionTo($waitPage);
     });
 

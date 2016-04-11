@@ -176,6 +176,14 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('voting over');
     });
 
+    // The game is over
+    socket.on('game over', function (data) {
+        console.log('game is over');
+        socket.broadcast.emit('game over', {
+            winner: data.winner
+        });
+    });
+
     // The client or game host has disconnected
     socket.on('disconnect', function () {
         if (addedUser) {

@@ -31,6 +31,18 @@ $(function() {
     var socket = io();
     var state = null;
 
+    function shuffle(array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+        while (0 !== currentIndex) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+        return array;
+    }
+
     function transitionTo($nextPage) {
         if ($currentPage == $nextPage) return;
         $currentPage.fadeOut();
@@ -83,8 +95,13 @@ $(function() {
         });
         $submittedList.empty();
         $votedList.empty();
+        var listToDisplay = [];
         for (var user in submittedMap) {
-            $submittedList.append('<li class="whiteCard"><button class="cardButton">' + submittedMap[user] + '</button></li>');
+            listToDisplay.push(submittedMap[user]);
+        }
+        shuffle(listToDisplay);
+        for (var i = 0; i < listToDisplay.length; i++) {
+            $submittedList.append('<li class="whiteCard"><button class="cardButton">' + listToDisplay[i] + '</button></li>');
         }
         transitionTo($votePage);
         startTimer($voteTimer, 25, $votePage, endVoting);
@@ -158,8 +175,12 @@ $(function() {
     }
 
     function endGame() {
-        $winner.text(state.players[0].username);
+        var winner = state.players[0].username;
+        $winner.text(winner);
         transitionTo($overPage);
+        socket.emit('game over', {
+            winner: winner
+        });
     }
 
     $newButton.click(function() {
