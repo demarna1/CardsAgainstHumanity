@@ -106,7 +106,7 @@ io.on('connection', function (socket) {
     });
 
     // The host has started the game
-    socket.on('start game', function () {
+    socket.on('start round', function () {
         console.log('Game is starting!');
         db.blackCard(function (err, blackCard) {
             if (err) return console.log(err);

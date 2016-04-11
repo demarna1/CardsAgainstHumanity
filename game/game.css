@@ -57,7 +57,7 @@ ul {
   margin: 20px;
 }
 
-.lobby.page, .question.page, .vote.page, .result.page, .score.page {
+.lobby.page, .question.page, .vote.page, .result.page, .score.page, .over.page {
   display: none;
   text-align: center;
   margin: auto;

@@ -6,6 +6,7 @@ $(function() {
     var $votePage = $('.vote.page');
     var $resultPage = $('.result.page');
     var $scorePage = $('.score.page');
+    var $overPage = $('.over.page');
     var $currentPage = $newPage;
 
     // Other jQuery elements
@@ -24,6 +25,7 @@ $(function() {
     var $votedList = $('.votedList');
     var $resultBody = $('.resultBody');
     var $scoreBody = $('.scoreBody');
+    var $winner = $('.winner');
 
     // State variables
     var socket = io();
@@ -145,9 +147,19 @@ $(function() {
         var timeout = (state.players.length * 2000) + 6000;
         setTimeout(function() {
             if ($currentPage == $scorePage) {
-                socket.emit('start game');
+                if (state.isGameOver()) {
+                    endGame();
+                }
+                else {
+                    socket.emit('start round');
+                }
             }
         }, timeout);
+    }
+
+    function endGame() {
+        $winner.text(state.players[0].username);
+        transitionTo($overPage);
     }
 
     $newButton.click(function() {
@@ -155,7 +167,8 @@ $(function() {
     });
 
     $startButton.click(function() {
-        socket.emit('start game');
+        state.winningScore = 5 * state.players.length;
+        socket.emit('start round');
     });
 
     socket.on('code created', function (data) {

@@ -8,6 +8,7 @@ function State(gameCode) {
     this.submissions = {};
     this.voted = {};
     this.results = [];
+    this.winningScore = 0;
 }
 
 /*
@@ -21,6 +22,7 @@ State.prototype.restart = function() {
     for (var i = 0; i < this.players.length; i++) {
         this.players[i].score = 0;
     }
+    this.winningScore = 0;
 };
 
 /*
@@ -140,4 +142,17 @@ State.prototype.isVotingOver = function() {
         count++;
     }
     return allDone && count >= this.players.length;
+};
+
+/*
+ * The game is over if any player has more than the winning
+ * score and is the sole leader. Assumes player list is
+ * already sorted.
+ */
+State.prototype.isGameOver = function() {
+    if (this.players[0].score >= this.winningScore &&
+        this.players[0].score > this.players[1].score) {
+            return true;
+    }
+    return false;
 };
