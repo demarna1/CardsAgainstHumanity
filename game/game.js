@@ -114,7 +114,7 @@ $(function() {
             '<td><button class="cardButton">' + r.cards + '</button></td>' +
             '<td class="label">' + r.voters.length + '</td>' +
         '</tr>');
-        timeout = (state.results.length - i) * 2000;
+        timeout = (state.results.length - i) * (6000/state.results.length);
         setTimeout(function() {
             $('#result' + i).css('visibility', 'visible').hide().fadeIn();
         }, timeout);
@@ -130,7 +130,7 @@ $(function() {
             addResultRow(i);
         }
         transitionTo($resultPage);
-        var timeout = (state.results.length * 2000) + 6000;
+        var timeout = 12000;
         setTimeout(function() {
             if ($currentPage == $resultPage) {
                 endResults();
@@ -144,10 +144,8 @@ $(function() {
             '<td class="label">' + r.username + '</td>' +
             '<td class="label">' + r.score + '</td>' +
         '</tr>');
-        timeout = (state.players.length - i) * 2000;
-        console.log('setting visibility timeout of ' + timeout);
+        timeout = (state.players.length - i) * (6000/state.results.length);
         setTimeout(function() {
-            console.log('setting visible');
             $('#score' + i).css('visibility', 'visible').hide().fadeIn();
         }, timeout);
     }
@@ -161,7 +159,7 @@ $(function() {
             addScoreRow(i);
         }
         transitionTo($scorePage);
-        var timeout = (state.players.length * 2000) + 6000;
+        var timeout = 12000;
         setTimeout(function() {
             if ($currentPage == $scorePage) {
                 if (state.isGameOver()) {
