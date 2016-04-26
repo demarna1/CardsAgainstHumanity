@@ -23,4 +23,8 @@ module.exports = function(app) {
     app.get('/ko', function(req, res) {
         res.sendFile(path.resolve('ko/ko.html'));
     });
+
+    app.get('/beta', function(req, res) {
+        res.sendFile(path.resolve('beta/beta.html'));
+    });
 }
