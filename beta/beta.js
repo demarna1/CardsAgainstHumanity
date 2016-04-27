@@ -44,7 +44,7 @@ $(function() {
         trad.x = canvas.width / 2;
         stage.addChild(trad);
 
-        /* Draw Joelle text */
+        /* Draw Title text */
         var jText = new createjs.Text('Cards Against Humanity', 'bold 48px Helvetica', '#fff');
         var jBounds = jText.getBounds();
         jScale = canvas.width / (jBounds.width * 2);
@@ -54,6 +54,39 @@ $(function() {
         jText.x = canvas.width / 2 - (jBounds.width*jScale) / 2;
         stage.addChild(jText);
 
-        stage.update();
+        /* Draw sample cards */
+        var samples = [];
+        for (var i = 0; i < 5; i++) {
+            var sample = new createjs.Shape();
+            sample.graphics.beginFill('#fff');
+            sample.graphics.drawRoundRect(0, 0, 120, 180, 5);
+            sample.regX = 60;
+            sample.regY = 90;
+            sample.x = (canvas.width / 2) - (i * 120 - 240);
+            if (i % 3 == 0) {
+                sample.y = -180;
+            } else if (i % 3 == 1) {
+                sample.y = -90;
+            } else {
+                sample.y = -270;
+            }
+            samples.push(sample);
+            stage.addChild(sample);
+        }
+
+        createjs.Ticker.setFPS(30);
+        createjs.Ticker.addEventListener('tick', function() {
+            for (var i = 0; i < 5; i++) {
+                if (samples[i].y < canvas.height - 10) {
+                    if (i % 2 == 0) {
+                        samples[i].rotation += 1;
+                    } else {
+                        samples[i].rotation -= 1;
+                    }
+                    samples[i].y += 10;
+                }
+            }
+            stage.update();
+        });
     }
 });
