@@ -1,6 +1,6 @@
-$(function() {
-    var tradImage = null;
-    var koImage = null;
+function introAnimation(callback) {
+    var exitLight = null;
+    var exitDark = null;
     var canvas = document.getElementById('testCanvas');
 
     //showDistractor();
@@ -9,15 +9,15 @@ $(function() {
     var queue = new createjs.LoadQueue();
     queue.on("complete", handleComplete, this);
     queue.loadManifest([
-        { id: "trad", src: "/traditional.png" },
-        { id: "ko", src: "/knockout.png" }
+        { id: "exitLight", src: "/exit_light.png" },
+        { id: "exitDark", src: "/exit_dark.png" }
     ]);
 
     /* Process loaded images */
     function handleComplete() {
-        tradImage = queue.getResult("trad");
-        koImage = queue.getResult("ko");
-        window.addEventListener('resize', resizeCanvas, false);
+        exitLight = queue.getResult("exitLight");
+        exitDark = queue.getResult("exitDark");
+        window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
     }
 
@@ -32,19 +32,19 @@ $(function() {
         draw();
     }
 
-    function draw() {
-        var stage = new createjs.Stage('testCanvas');
+    /* Draw exit image */
+    function drawExitImage(stage) {
+        var exit = new createjs.Bitmap(exitLight);
+        var scale = 0.10 * (canvas.width / 800);
+        exit.scaleX = scale;
+        exit.scaleY = scale;
+        exit.y = 10;
+        exit.x = 5;
+        stage.addChild(exit);
+    }
 
-        /* Draw trad image */
-        var trad = new createjs.Bitmap(tradImage);
-        var tScale = 0.5 * (canvas.width / 800);
-        trad.scaleX = tScale;
-        trad.scaleY = tScale;
-        trad.y = canvas.height / 2;
-        trad.x = canvas.width / 2;
-        stage.addChild(trad);
-
-        /* Draw title text */
+    /* Draw title text */
+    function drawTitleText(stage) {
         var jText = new createjs.Text('Cards Against Humanity', 'bold 48px Helvetica', '#fff');
         var jBounds = jText.getBounds();
         jScale = canvas.width / (jBounds.width * 2);
@@ -53,6 +53,12 @@ $(function() {
         jText.y = 20;
         jText.x = canvas.width / 2 - (jBounds.width*jScale) / 2;
         stage.addChild(jText);
+    }
+
+    function draw() {
+        var stage = new createjs.Stage('testCanvas');
+        drawExitImage(stage);
+        drawTitleText(stage);
 
         /* Draw sample cards */
         var sampleScale = canvas.width/1000;
@@ -89,14 +95,30 @@ $(function() {
         }
 
         createjs.Ticker.setFPS(30);
+        createjs.Ticker.removeAllEventListeners();
         createjs.Ticker.addEventListener('tick', function() {
+            var endAnimation = true;
             for (var i = 0; i < sample_y_pos.length; i++) {
                 if (samples[i].y < canvas.height + 30) {
                     samples[i].rotation += sample_rotes[i];
                     samples[i].y += sample_ydiff[i];
+                    endAnimation = false;
                 }
+            }
+            if (endAnimation) {
+                createjs.Ticker.removeAllEventListeners();
+                callback();
+                return;
             }
             stage.update();
         });
     }
-});
+}
+
+function gameLobbyDisplay() {
+
+}
+
+function hostExistsDisplay() {
+
+}

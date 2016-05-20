@@ -57,6 +57,7 @@ io.on('connection', function (socket) {
     // The host wants to create a new game lobby
     socket.on('new game', function () {
         if (gameCode) {
+            console.log('host exists yo');
             socket.emit('host exists', {
                 gameCode: gameCode
             });
